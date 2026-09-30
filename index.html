@@ -286,27 +286,6 @@
       font-size: 0.98rem;
     }
 
-    /* ——— Характеристики ——— */
-    .specs {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--paper-0);
-      border: 1px solid var(--paper-300);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(58, 44, 30, 0.10);
-    }
-    .specs th, .specs td { padding: 12px 18px; text-align: left; border-bottom: 1px solid var(--paper-200); }
-    .specs tr:last-child th, .specs tr:last-child td { border-bottom: none; }
-    .specs th { width: 34%; font-weight: 700; color: var(--ink-600); background: rgba(241, 227, 196, 0.5); }
-    .specs td { color: var(--ink-400); word-break: break-word; }
-    .specs code {
-      font-family: Consolas, 'Courier New', monospace;
-      font-size: 0.86rem;
-      color: var(--ink-500);
-      word-break: break-all;
-    }
-
     /* ——— Скачать ——— */
     .download {
       text-align: center;
@@ -340,7 +319,6 @@
 
     @media (max-width: 720px) {
       .stats { grid-template-columns: repeat(2, 1fr); }
-      .specs th { width: 40%; }
       section { padding: 34px 0; }
     }
 
@@ -446,27 +424,6 @@
           Приложение подписано собственным ключом, а не отладочным. Если Android пишет,
           что подписи не совпадают — сначала удалите старую версию и установите заново.
         </p>
-      </div>
-    </section>
-
-    <section id="harakteristiki" style="padding-top: 0;">
-      <div class="wrap">
-        <h2 class="sec-title">Характеристики сборки</h2>
-        <p class="sec-sub">Актуальные на 30 сентября 2026</p>
-        <div class="ornament" aria-hidden="true">✦ ✦ ✦</div>
-
-        <table class="specs">
-          <tbody>
-            <tr><th>Версия</th><td>1.0.0 (versionCode 1)</td></tr>
-            <tr><th>Пакет</th><td><code>com.ingredientroute.app</code></td></tr>
-            <tr><th>Минимальная версия Android</th><td>7.0 (API 24)</td></tr>
-            <tr><th>Целевая версия Android</th><td>16 (API 36)</td></tr>
-            <tr><th>Архитектуры</th><td><code>arm64-v8a</code>, <code>armeabi-v7a</code></td></tr>
-            <tr><th>Размер файла</th><td>50,4 МБ (52 853 449 байт)</td></tr>
-            <tr><th>Интернет</th><td>не требуется — данные хранятся на устройстве</td></tr>
-            <tr><th>SHA-256</th><td><code>6AC2512C5D4D54361AF76B4D74CDB266B3043C6BEDBC2924C4D7A8FAB00B6779</code></td></tr>
-          </tbody>
-        </table>
       </div>
     </section>
   </main>
