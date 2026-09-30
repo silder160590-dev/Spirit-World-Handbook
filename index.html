@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Справочник Мира Духов — ингредиенты, города и рецепты для Android</title>
+  <meta name="description" content="Справочник Мира Духов — приложение для Android: 247 ингредиентов, 44 города, 33 рецепта четырёх профессий. Быстрый поиск, фильтры по типам, уровни рецептов с 1 по 100. Скачайте APK.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Справочник Мира Духов">
+  <meta property="og:description" content="Ингредиенты, города и рецепты игры — в одном пергаментном справочнике. APK для Android 7.0+.">
+  <link rel="icon" type="image/png" href="./assets/favicon.png">
+  <link rel="apple-touch-icon" href="./assets/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper-0: #fdf8ec;
+      --paper-50: #f8efd9;
+      --paper-100: #f1e3c4;
+      --paper-200: #e8d7ae;
+      --paper-300: #d8c393;
+      --ink-200: #8a7250;
+      --ink-300: #6b573c;
+      --ink-400: #4f3e2b;
+      --ink-500: #3a2c1e;
+      --ink-600: #2a1f14;
+      --gold-300: #cba75d;
+      --gold-500: #a8853f;
+      --gold-700: #7d612b;
+      --seal-500: #7b2a1c;
+      --primary-700: #5a4527;
+      --hand: 'Caveat', 'Comic Sans MS', cursive;
+      --serif: 'PT Serif', Georgia, 'Times New Roman', serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--ink-500);
+      background-color: var(--paper-50);
+      background-image:
+        radial-gradient(ellipse at top, rgba(253, 248, 236, 0.7), transparent 60%),
+        radial-gradient(rgba(58, 44, 30, 0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 4px 4px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+    a { color: var(--primary-700); }
+    a:focus-visible { outline: 2px solid var(--gold-500); outline-offset: 3px; border-radius: 4px; }
+
+    /* ——— Шапка ——— */
+    .hero {
+      text-align: center;
+      padding: 56px 0 34px;
+      background: linear-gradient(180deg, rgba(241, 227, 196, 0.9), rgba(248, 239, 217, 0));
+      border-bottom: 1px solid var(--paper-300);
+    }
+
+    .hero .kicker {
+      font-family: var(--hand);
+      font-size: 1.5rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-700);
+      margin: 0 0 6px;
+    }
+
+    .hero h1 {
+      font-family: var(--hand);
+      font-weight: 700;
+      font-size: clamp(2.7rem, 7vw, 4.4rem);
+      line-height: 1.05;
+      color: var(--ink-600);
+      margin: 0 0 14px;
+    }
+
+    .hero .lead { max-width: 640px; margin: 0 auto 26px; font-size: 1.15rem; color: var(--ink-400); }
+
+    .logo {
+      width: 116px;
+      height: 116px;
+      object-fit: cover;
+      border-radius: 26px;
+      border: 2px solid var(--gold-500);
+      box-shadow: 0 6px 18px rgba(58, 44, 30, 0.25);
+      margin-bottom: 20px;
+      background: var(--paper-0);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--serif);
+      font-size: 1.08rem;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 14px 30px;
+      border-radius: 12px;
+      border: 1px solid var(--gold-500);
+      background: var(--primary-700);
+      color: var(--paper-0);
+      box-shadow: 0 3px 8px rgba(58, 44, 30, 0.28);
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .btn:hover { background: var(--ink-600); transform: translateY(-1px); }
+    .btn svg { flex: none; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink-400);
+      border: 1px dashed var(--ink-200);
+      box-shadow: none;
+      font-weight: 400;
+    }
+
+    .btn-ghost:hover { background: rgba(253, 248, 236, 0.8); color: var(--ink-600); }
+
+    .meta { font-size: 0.95rem; color: var(--ink-300); font-style: italic; }
+    /* ——— Цифры ——— */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      padding: 30px 0 6px;
+    }
+
+    .stat {
+      background: var(--paper-0);
+      border: 1px solid var(--paper-300);
+      border-radius: 14px;
+      padding: 16px 10px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(58, 44, 30, 0.10);
+    }
+
+    .stat b {
+      display: block;
+      font-family: var(--hand);
+      font-weight: 700;
+      font-size: 2.4rem;
+      line-height: 1;
+      color: var(--primary-700);
+    }
+
+    .stat span { font-size: 0.95rem; color: var(--ink-300); }
+
+    /* ——— Секции ——— */
+    section { padding: 44px 0; }
+
+    .sec-title {
+      font-family: var(--hand);
+      font-weight: 700;
+      font-size: clamp(2rem, 5vw, 2.7rem);
+      text-align: center;
+      color: var(--ink-600);
+      margin: 0 0 6px;
+    }
+
+    .sec-sub { text-align: center; color: var(--ink-300); font-style: italic; margin: 0 0 30px; }
+
+    .ornament {
+      text-align: center;
+      color: var(--gold-500);
+      font-size: 1.2rem;
+      letter-spacing: 0.6em;
+      margin: 0 0 26px;
+      user-select: none;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--paper-0);
+      border: 1px solid var(--paper-300);
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 2px 6px rgba(58, 44, 30, 0.10);
+    }
+
+    .card h3 {
+      font-family: var(--hand);
+      font-weight: 700;
+      font-size: 1.7rem;
+      margin: 0 0 6px;
+      color: var(--ink-600);
+    }
+
+    .card p { margin: 0; color: var(--ink-400); }
+    .card .num {
+      font-family: var(--hand);
+      font-size: 1.3rem;
+      color: var(--gold-700);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .chips { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .chip {
+      font-size: 0.85rem;
+      padding: 3px 12px;
+      border-radius: 999px;
+      border: 1px solid;
+    }
+
+    .chip-plants { background: #dfe4c6; border-color: #b0bb8a; color: #3f4b26; }
+    .chip-fish   { background: #e8d2d0; border-color: #c9a9a5; color: #6b3630; }
+    .chip-trees  { background: #eedcbc; border-color: #d0b482; color: #6d4a1c; }
+    .chip-ore    { background: #d8d4cc; border-color: #a8a29a; color: #3b3833; }
+    .chip-stones { background: #d5dde4; border-color: #a6b5c2; color: #2f4356; }
+
+    .prof { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .prof span {
+      font-size: 0.85rem;
+      padding: 3px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(58, 44, 30, 0.18);
+    }
+    .prof .p-alchemist { background: #e0d6e8; color: #4a2f5f; }
+    .prof .p-enchanter { background: #d5dce8; color: #2b3c5c; }
+    .prof .p-cook      { background: #eedec2; color: #6b4718; }
+    .prof .p-jeweler   { background: #e8d3da; color: #5f2338; }
+    /* ——— Установка ——— */
+    .steps { counter-reset: step; list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+    .steps li {
+      counter-increment: step;
+      position: relative;
+      background: var(--paper-0);
+      border: 1px solid var(--paper-300);
+      border-radius: 14px;
+      padding: 16px 18px 16px 66px;
+      box-shadow: 0 2px 6px rgba(58, 44, 30, 0.10);
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--primary-700);
+      color: var(--gold-300);
+      border: 1px solid var(--gold-500);
+      font-family: var(--hand);
+      font-weight: 700;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .steps li p { margin: 0; }
+
+    .note {
+      margin-top: 18px;
+      padding: 14px 18px;
+      border-left: 4px solid var(--seal-500);
+      background: rgba(243, 213, 202, 0.35);
+      border-radius: 0 10px 10px 0;
+      color: var(--ink-400);
+      font-size: 0.98rem;
+    }
+
+    /* ——— Характеристики ——— */
+    .specs {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--paper-0);
+      border: 1px solid var(--paper-300);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(58, 44, 30, 0.10);
+    }
+    .specs th, .specs td { padding: 12px 18px; text-align: left; border-bottom: 1px solid var(--paper-200); }
+    .specs tr:last-child th, .specs tr:last-child td { border-bottom: none; }
+    .specs th { width: 34%; font-weight: 700; color: var(--ink-600); background: rgba(241, 227, 196, 0.5); }
+    .specs td { color: var(--ink-400); word-break: break-word; }
+    .specs code {
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 0.86rem;
+      color: var(--ink-500);
+      word-break: break-all;
+    }
+
+    /* ——— Скачать ——— */
+    .download {
+      text-align: center;
+      background: linear-gradient(180deg, rgba(241, 227, 196, 0.65), rgba(253, 248, 236, 0.9));
+      border-top: 1px solid var(--paper-300);
+      border-bottom: 1px solid var(--paper-300);
+    }
+    .download .hint { color: var(--ink-300); font-size: 0.95rem; margin-top: 14px; }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px 40px;
+      color: var(--ink-300);
+      font-size: 0.95rem;
+    }
+    footer .seal {
+      display: inline-block;
+      font-family: var(--hand);
+      font-size: 1.35rem;
+      color: var(--seal-500);
+      border: 2px solid var(--seal-500);
+      border-radius: 50%;
+      width: 74px;
+      height: 74px;
+      line-height: 70px;
+      transform: rotate(-8deg);
+      margin-bottom: 12px;
+      opacity: 0.85;
+      user-select: none;
+    }
+
+    @media (max-width: 720px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .specs th { width: 40%; }
+      section { padding: 34px 0; }
+    }
+
+
+
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <img class="logo" src="./assets/icon.png" alt="Иконка приложения «Справочник Мира Духов»" width="116" height="116">
+      <p class="kicker">Приложение для Android</p>
+      <h1>Справочник Мира&nbsp;Духов</h1>
+      <p class="lead">
+        Ингредиенты, города и рецепты игры — в одном пергаментном справочнике.
+        Быстрый поиск с вариантами названий, фильтры по типам и уровни рецептов с 1 по 100.
+      </p>
+      <div class="actions">
+        <a class="btn" href="./download/mira-dukhov-1.0.0.apk" download>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Скачать APK — 50,4&nbsp;МБ
+        </a>
+        <a class="btn btn-ghost" href="#ustanovka">Как установить</a>
+      </div>
+      <p class="meta">Версия 1.0.0 · Android 7.0 и новее · Работает офлайн</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <div class="stats">
+        <div class="stat"><b>247</b><span>ингредиентов</span></div>
+        <div class="stat"><b>44</b><span>города</span></div>
+        <div class="stat"><b>33</b><span>рецепта</span></div>
+        <div class="stat"><b>4</b><span>профессии</span></div>
+      </div>
+    </div>
+    <section id="vozmozhnosti">
+      <div class="wrap">
+        <h2 class="sec-title">Что внутри</h2>
+        <p class="sec-sub">Три раздела, как в приложении</p>
+        <div class="ornament" aria-hidden="true">✦ ✦ ✦</div>
+
+        <div class="cards">
+          <article class="card">
+            <span class="num">Раздел I</span>
+            <h3>Ингредиенты</h3>
+            <p>
+              Полный справочник из 247 позиций: растения, рыба, деревья, руда и камни.
+              Поиск понимает варианты названий — «Треон воды» найдёт и «Треон (стихии)».
+              Ингредиенты с монстров помечены отдельно.
+            </p>
+            <div class="chips">
+              <span class="chip chip-plants">Растения/грибы</span>
+              <span class="chip chip-fish">Рыба</span>
+              <span class="chip chip-trees">Деревья</span>
+              <span class="chip chip-ore">Руда</span>
+              <span class="chip chip-stones">Камни</span>
+            </div>
+          </article>
+
+          <article class="card">
+            <span class="num">Раздел II</span>
+            <h3>Города</h3>
+            <p>
+              44 города со списками того, что в них продаётся. Поиск работает и по городам,
+              и по ингредиентам: введите название вещества — и увидите, в каких городах
+              оно встречается.
+            </p>
+          </article>
+
+          <article class="card">
+            <span class="num">Раздел III</span>
+            <h3>Рецепты</h3>
+            <p>
+              33 рецепта четырёх профессий с уровнями с 1 по 100. Выберите уровень —
+              приложение покажет полный список ингредиентов и подчеркнёт те,
+              что нужны на всех уровнях.
+            </p>
+            <div class="prof">
+              <span class="p-alchemist">Зельевар</span>
+              <span class="p-enchanter">Заклинатель</span>
+              <span class="p-cook">Кулинар</span>
+              <span class="p-jeweler">Ювелир</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section id="ustanovka">
+      <div class="wrap">
+        <h2 class="sec-title">Установка</h2>
+        <p class="sec-sub">APK ставится вручную, без Google Play</p>
+        <div class="ornament" aria-hidden="true">✦ ✦ ✦</div>
+
+        <ol class="steps">
+          <li><p>Скачайте файл <strong>mira-dukhov-1.0.0.apk</strong> кнопкой на этой странице.</p></li>
+          <li><p>Откройте его на телефоне. Android спросит, разрешить установку из этого источника — разрешите для вашего браузера или файлового менеджера.</p></li>
+          <li><p>Нажмите «Установить». После установки приложение можно открыть: интернет для справочника не нужен.</p></li>
+        </ol>
+
+        <p class="note">
+          Приложение подписано собственным ключом, а не отладочным. Если Android пишет,
+          что подписи не совпадают — сначала удалите старую версию и установите заново.
+        </p>
+      </div>
+    </section>
+
+    <section id="harakteristiki" style="padding-top: 0;">
+      <div class="wrap">
+        <h2 class="sec-title">Характеристики сборки</h2>
+        <p class="sec-sub">Актуальные на 30 сентября 2026</p>
+        <div class="ornament" aria-hidden="true">✦ ✦ ✦</div>
+
+        <table class="specs">
+          <tbody>
+            <tr><th>Версия</th><td>1.0.0 (versionCode 1)</td></tr>
+            <tr><th>Пакет</th><td><code>com.ingredientroute.app</code></td></tr>
+            <tr><th>Минимальная версия Android</th><td>7.0 (API 24)</td></tr>
+            <tr><th>Целевая версия Android</th><td>16 (API 36)</td></tr>
+            <tr><th>Архитектуры</th><td><code>arm64-v8a</code>, <code>armeabi-v7a</code></td></tr>
+            <tr><th>Размер файла</th><td>50,4 МБ (52 853 449 байт)</td></tr>
+            <tr><th>Интернет</th><td>не требуется — данные хранятся на устройстве</td></tr>
+            <tr><th>SHA-256</th><td><code>6AC2512C5D4D54361AF76B4D74CDB266B3043C6BEDBC2924C4D7A8FAB00B6779</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <section class="download" id="skachat">
+    <div class="wrap">
+      <h2 class="sec-title">Скачать</h2>
+      <p class="sec-sub">Справочник Мира Духов 1.0.0 для Android</p>
+      <div class="actions">
+        <a class="btn" href="./download/mira-dukhov-1.0.0.apk" download>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Скачать APK — 50,4&nbsp;МБ
+        </a>
+      </div>
+      <p class="hint">Файл подписан собственным ключом · SHA-256: <code>6AC2512C…B6779</code></p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="seal" aria-hidden="true">МД</div>
+    <p>Справочник Мира Духов — любительское приложение-справочник для Android.</p>
+    <p>Данные по ингредиентам, городам и рецептам собраны из игровых таблиц.</p>
+  </footer>
+
+
+
+
+</body>
+</html>
