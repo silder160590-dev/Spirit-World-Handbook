@@ -10,7 +10,7 @@
 | --- | --- |
 | `index.html` | Сама страница: описание, установка, характеристики, кнопка скачивания |
 | `assets/icon.png`, `assets/favicon.png` | Иконки (копии из `assets/images/`) |
-| `download/mira-dukhov-1.0.0.apk` | Release-APK для скачивания |
+| `download/spravochnik-mira-dukhov-1.0.0.apk` | Release-APK для скачивания |
 | `.nojekyll` | Отключает сборку Jekyll на GitHub Pages |
 
 ## Что нужно сделать один раз в репозитории
