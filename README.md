@@ -9,6 +9,7 @@
 | Файл | Что это |
 | --- | --- |
 | `index.html` | Сама страница: описание, установка, характеристики, кнопка скачивания |
+| `privacy.html` | Политика конфиденциальности (вторая страница, ссылка из подвала `index.html`) |
 | `assets/icon.png`, `assets/favicon.png` | Иконки (копии из `assets/images/`) |
 | `download/spravochnik-mira-dukhov-1.0.0.apk` | Release-APK для скачивания |
 | `.nojekyll` | Отключает сборку Jekyll на GitHub Pages |
