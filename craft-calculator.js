@@ -77,6 +77,22 @@
     return out;
   }
 
+  function effectFor(recipe, level) {
+    var effect = PRESET_RECIPE_EFFECTS[recipe.name];
+    if (!effect) return '';
+    var best = null;
+    for (var i = 0; i < RECIPE_LEVELS.length; i++) {
+      var current = RECIPE_LEVELS[i];
+      if (current > level) break;
+      if (effect[current] !== undefined) best = effect[current];
+    }
+    return best || '';
+  }
+
+  function outputFor(recipe) {
+    return recipe.name;
+  }
+
   var selectedRecipe = null;
 
   function fillRecipes() {
@@ -167,12 +183,21 @@
 
   copyBtn.addEventListener('click', function () {
     if (!selectedRecipe || !craftTbody.innerHTML) return;
-    var text = '';
+    var qty = clampInt(qtyInput.value, 1, 999, 1);
+    var level = clampInt(levelSelect.value, 1, 100, 1);
+    var output = outputFor(selectedRecipe);
+    var effect = effectFor(selectedRecipe, level);
+    var text = '- производство = ' + qty + ' ' + output.toLowerCase();
+    if (effect) text += ' (' + effect + ')';
+    text += '\n';
     var rows = craftTbody.querySelectorAll('tr');
+    var copiedIngredients = 0;
     for (var i = 0; i < rows.length; i++) {
+      if (i < 2) continue;
       var cells = rows[i].querySelectorAll('td');
       if (cells.length >= 3) {
-        text += cells[0].textContent.trim() + ' ' + cells[2].textContent.trim() + '\n';
+        text += (copiedIngredients === 0 ? '- ' : '') + cells[2].textContent.trim() + ' ' + cells[0].textContent.trim().toLowerCase() + '\n';
+        copiedIngredients++;
       }
     }
     var textarea = document.createElement('textarea');
