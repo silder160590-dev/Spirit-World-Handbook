@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Калькуляторы — Справочник Мира Духов</title>
+  <meta name="description" content="Калькуляторы опыта и урона по монстрам бестиария и пересчёта уровней.">
+  <link rel="icon" type="image/png" href="./assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper-0: #fdf8ec;
+      --paper-50: #f8efd9;
+      --paper-100: #f1e3c4;
+      --paper-200: #e8d7ae;
+      --paper-300: #d8c393;
+      --ink-200: #8a7250;
+      --ink-300: #6b573c;
+      --ink-400: #4f3e2b;
+      --ink-500: #3a2c1e;
+      --ink-600: #2a1f14;
+      --gold-300: #cba75d;
+      --gold-500: #a8853f;
+      --gold-700: #7d612b;
+      --seal-500: #7b2a1c;
+      --primary-700: #5a4527;
+      --hand: 'Caveat', 'Comic Sans MS', cursive;
+      --serif: 'PT Serif', Georgia, 'Times New Roman', serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--ink-500);
+      background-color: var(--paper-50);
+      background-image:
+        radial-gradient(ellipse at top, rgba(253, 248, 236, 0.7), transparent 60%),
+        radial-gradient(rgba(58, 44, 30, 0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 4px 4px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+
+    /* ——— Шапка ——— */
+    .hero {
+      text-align: center;
+      padding: 42px 0 30px;
+      background: linear-gradient(180deg, rgba(241, 227, 196, 0.9), rgba(248, 239, 217, 0));
+      border-bottom: 1px solid var(--paper-300);
+    }
+
+    .hero .kicker {
+      font-family: var(--hand);
+      font-size: 1.4rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-700);
+      margin: 0 0 6px;
+    }
+
+    .hero h1 {
+      font-family: var(--hand);
+      font-weight: 700;
+      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      line-height: 1.05;
+      color: var(--ink-600);
+      margin: 0 0 10px;
+    }
+
+    .hero .lead { max-width: 560px; margin: 0 auto; font-size: 1.05rem; color: var(--ink-400); }
+
+    /* ——— Секции ——— */
+    section { padding: 38px 0; }
+
+    .sec-title {
+      font-family: var(--hand);
+      font-weight: 700;
+      font-size: clamp(1.9rem, 5vw, 2.5rem);
+      text-align: center;
+      color: var(--ink-600);
+      margin: 0 0 4px;
+    }
+
+    .sec-sub { text-align: center; color: var(--ink-300); font-style: italic; margin: 0 0 24px; }
+
+    .ornament {
+      text-align: center;
+      color: var(--gold-500);
+      font-size: 1.1rem;
+      letter-spacing: 0.6em;
+      margin: 0 0 24px;
+      user-select: none;
+    }
+
+    .calc-card {
+      background: var(--paper-0);
+      border: 1px solid var(--paper-300);
+      border-radius: 16px;
+      padding: 26px 24px;
+      box-shadow: 0 2px 6px rgba(58, 44, 30, 0.10);
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px 20px;
+    }
+
+    .field { min-width: 0; }
+
+    .field > label {
+      display: block;
+      font-size: 0.92rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink-300);
+      margin: 0 0 6px;
+    }
+
+    .field .hint { font-size: 0.85rem; color: var(--ink-200); font-style: italic; margin-top: 4px; }
+
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      color: var(--ink-600);
+      background: var(--paper-50);
+      border: 1px solid var(--paper-300);
+      border-radius: 10px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input[type="text"]:focus, input[type="number"]:focus, select:focus {
+      border-color: var(--gold-500);
+      box-shadow: 0 0 0 3px rgba(168, 133, 63, 0.18);
+    }
+
+    select { cursor: pointer; }
+    select:disabled { color: var(--ink-200); cursor: default; background: var(--paper-100); }
+
+    /* ——— Поиск монстра с подсказками ——— */
+    .combo { position: relative; }
+
+    .combo-list {
+      position: absolute;
+      z-index: 30;
+      left: 0;
+      right: 0;
+      top: calc(100% + 6px);
+      background: var(--paper-0);
+      border: 1px solid var(--paper-300);
+      border-radius: 12px;
+      box-shadow: 0 10px 26px rgba(58, 44, 30, 0.22);
+      max-height: 320px;
+      overflow-y: auto;
+      padding: 6px;
+      display: none;
+    }
+
+    .combo-list.open { display: block; }
+
+    .combo-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--ink-500);
+    }
+
+    .combo-item .lvl { flex: none; font-size: 0.88rem; color: var(--ink-200); font-style: italic; }
+    .combo-item:hover, .combo-item.active { background: var(--paper-100); color: var(--ink-600); }
+    .combo-item.none-lvl .lvl { color: var(--seal-500); }
+
+    .combo-empty { padding: 10px 12px; color: var(--ink-200); font-style: italic; }
+    .combo-mark { color: var(--gold-700); font-weight: 700; }
+
+    /* ——— Степпер (−/+ по бокам) ——— */
+    .stepper { display: flex; align-items: stretch; gap: 8px; }
+
+    .stepper button {
+      flex: none;
+      width: 46px;
+      font-family: var(--hand);
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--primary-700);
+      background: var(--paper-100);
+      border: 1px solid var(--paper-300);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    .stepper button:hover { background: var(--paper-200); }
+    .stepper button:active { transform: translateY(1px); }
+    .stepper button:disabled { opacity: 0.45; cursor: default; transform: none; }
+
+    .stepper input { text-align: center; -moz-appearance: textfield; appearance: textfield; }
+    .stepper input::-webkit-outer-spin-button,
+    .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+    /* ——— Кнопка «Очистить» ——— */
+    .card-actions { margin-top: 20px; display: flex; justify-content: flex-end; }
+
+    .btn-clear {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--seal-500);
+      background: transparent;
+      border: 1px dashed var(--seal-500);
+      border-radius: 10px;
+      padding: 9px 22px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .btn-clear:hover { background: rgba(123, 42, 28, 0.08); }
+
+    /* ——— Результаты ——— */
+    .results { margin-top: 22px; display: grid; gap: 14px; }
+
+    .result-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+      gap: 6px 16px;
+      background: var(--paper-50);
+      border: 1px solid var(--paper-200);
+      border-radius: 12px;
+      padding: 12px 16px;
+    }
+
+    .result-row .r-label { font-size: 0.95rem; color: var(--ink-300); }
+    .result-row .r-value {
+      font-family: var(--hand);
+      font-weight: 700;
+      font-size: 1.7rem;
+      line-height: 1.1;
+      color: var(--primary-700);
+      white-space: nowrap;
+    }
+
+    .result-row .r-formula {
+      grid-column: 1 / -1;
+      font-size: 0.88rem;
+      color: var(--ink-200);
+      font-style: italic;
+    }
+
+    .result-row.total { background: var(--paper-100); border-color: var(--paper-300); }
+    .result-row.total .r-value { font-size: 2rem; color: var(--gold-700); }
+
+    .placeholder { color: var(--ink-200); font-style: italic; text-align: center; padding: 8px 0 2px; }
+
+    /* ——— Футер ——— */
+    footer {
+      text-align: center;
+      padding: 26px 20px 40px;
+      color: var(--ink-300);
+      font-size: 0.95rem;
+      border-top: 1px solid var(--paper-300);
+    }
+
+    footer .seal {
+      display: inline-block;
+      font-family: var(--hand);
+      font-size: 1.3rem;
+      color: var(--seal-500);
+      border: 2px solid var(--seal-500);
+      border-radius: 50%;
+      width: 66px;
+      height: 66px;
+      line-height: 62px;
+      transform: rotate(-8deg);
+      margin-bottom: 10px;
+      opacity: 0.85;
+      user-select: none;
+    }
+
+    @media (max-width: 640px) {
+      .fields { grid-template-columns: 1fr; }
+      .result-row { grid-template-columns: 1fr; }
+      .result-row .r-value { font-size: 1.5rem; }
+      .result-row.total .r-value { font-size: 1.7rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <p class="kicker">Справочник Мира Духов</p>
+      <h1>Калькуляторы</h1>
+      <p class="lead">Расчёт опыта и урона по монстрам бестиария и пересчёт уровней по опыту.</p>
+    </div>
+  </header>
+
+  <main>
+    <section id="monstry">
+      <div class="wrap">
+        <h2 class="sec-title">Опыт и урон</h2>
+        <p class="sec-sub">Выберите монстра из бестиария — расчёт обновляется сразу</p>
+        <div class="ornament" aria-hidden="true">✦ ✦ ✦</div>
+
+        <div class="calc-card">
+          <div class="fields">
+            <div class="field field-monster">
+              <label for="monster-input">Монстр</label>
+              <div class="combo">
+                <input type="text" id="monster-input" autocomplete="off" spellcheck="false" placeholder="Начните вводить имя…">
+                <div class="combo-list" id="monster-list" role="listbox" aria-label="Варианты монстров"></div>
+              </div>
+              <p class="hint" id="monster-hint">Монстры из пресета бестиария (74 карточки)</p>
+            </div>
+
+            <div class="field">
+              <label for="level-select">Уровень</label>
+              <select id="level-select" disabled>
+                <option value="">— сначала выберите монстра —</option>
+              </select>
+              <p class="hint" id="level-hint">Диапазон уровней выбранного монстра</p>
+            </div>
+
+            <div class="field">
+              <label for="exp-select">Опыт</label>
+              <select id="exp-select">
+                <option value="1" selected>100%</option>
+                <option value="0.75">75%</option>
+                <option value="0.5">50%</option>
+              </select>
+              <p class="hint">Множитель опыта</p>
+            </div>
+
+            <div class="field">
+              <label for="dmg-select">Процент урона</label>
+              <select id="dmg-select">
+                <option value="10" selected>10%</option>
+                <option value="20">20%</option>
+                <option value="30">30%</option>
+                <option value="40">40%</option>
+                <option value="50">50%</option>
+                <option value="60">60%</option>
+              </select>
+              <p class="hint">Снижение урона</p>
+            </div>
+
+            <div class="field">
+              <label for="count-input">Количество</label>
+              <div class="stepper">
+                <button type="button" id="count-minus" aria-label="Уменьшить количество">−</button>
+                <input type="number" id="count-input" inputmode="numeric" min="1" step="1" value="1" aria-label="Количество">
+                <button type="button" id="count-plus" aria-label="Увеличить количество">+</button>
+              </div>
+              <p class="hint">Сколько монстров</p>
+            </div>
+          </div>
+
+          <div class="results" id="monster-results">
+            <p class="placeholder" id="monster-placeholder">Выберите монстра, чтобы увидеть расчёт.</p>
+            <div class="result-row" id="row-exp" hidden>
+              <span class="r-label">Опыт</span>
+              <span class="r-value" id="exp-value">—</span>
+              <span class="r-formula" id="exp-formula"></span>
+            </div>
+            <div class="result-row total" id="row-dmg" hidden>
+              <span class="r-label">Урон</span>
+              <span class="r-value" id="dmg-value">—</span>
+              <span class="r-formula" id="dmg-formula"></span>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button type="button" class="btn-clear" id="monster-clear">Очистить</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="urovni">
+      <div class="wrap">
+        <h2 class="sec-title">Пересчёт уровней</h2>
+        <p class="sec-sub">Сколько уровней и остаток опыта после начисления — 1 уровень = 50 опыта</p>
+        <div class="ornament" aria-hidden="true">✦ ✦ ✦</div>
+
+        <div class="calc-card">
+          <div class="fields">
+            <div class="field">
+              <label for="lvl2-input">Уровень</label>
+              <div class="stepper">
+                <button type="button" id="lvl2-minus" aria-label="Уменьшить уровень">−</button>
+                <input type="number" id="lvl2-input" inputmode="numeric" min="1" step="1" value="1" aria-label="Уровень">
+                <button type="button" id="lvl2-plus" aria-label="Увеличить уровень">+</button>
+              </div>
+              <p class="hint">Текущий уровень, по умолчанию 1</p>
+            </div>
+
+            <div class="field">
+              <label for="exp2-input">Опыт</label>
+              <input type="number" id="exp2-input" inputmode="numeric" min="0" max="49" step="1" value="0" aria-label="Опыт">
+              <p class="hint">Текущий опыт, от 0 до 49</p>
+            </div>
+
+            <div class="field">
+              <label for="gain2-input">Начисление</label>
+              <input type="number" id="gain2-input" inputmode="numeric" min="0" step="1" placeholder="—" aria-label="Начисление опыта">
+              <p class="hint">Сколько опыта начислено, по умолчанию пусто</p>
+            </div>
+          </div>
+
+          <div class="results" id="lvl2-results">
+            <p class="placeholder" id="lvl2-placeholder">Введите начисление, чтобы увидеть пересчёт.</p>
+            <div class="result-row" id="row2-level" hidden>
+              <span class="r-label">Новый уровень</span>
+              <span class="r-value" id="lvl2-value">—</span>
+              <span class="r-formula" id="lvl2-formula"></span>
+            </div>
+            <div class="result-row total" id="row2-rest" hidden>
+              <span class="r-label">Остаток опыта</span>
+              <span class="r-value" id="rest2-value">—</span>
+              <span class="r-formula" id="rest2-formula"></span>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button type="button" class="btn-clear" id="lvl2-clear">Очистить</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="seal" aria-hidden="true">МД</div>
+      <p>Справочник Мира Духов — любительское приложение-справочник для Android.</p>
+      <p>Данные по монстрам взяты из пресета бестиария приложения.</p>
+    </div>
+  </footer>
+  <script>
+    'use strict';
+
+    /* ——— Данные: монстры пресета бестиария (74 карточки) ——— */
+    var MONSTERS = [
+      { n: "Агрессивный тронкс", min: 2, max: 4 },
+    { n: "Аксолотль мутант", min: 3, max: 5 },
+    { n: "Белый габис", min: 3, max: 5 },
+    { n: "Баба-Яга", min: 4, max: 6 },
+    { n: "Балахам", min: 1, max: 3 },
+    { n: "Бобробис", min: 3, max: 5 },
+    { n: "Врандуис", min: 4, max: 6 },
+    { n: "Вепрь сумрачный", min: 2, max: 4 },
+    { n: "Горгомедиец человекоподобный", min: 1, max: 3 },
+    { n: "Горгомедиец-высасыватель", min: 2, max: 4 },
+    { n: "Горгомедиец-пожиратель", min: 3, max: 5 },
+    { n: "Горгомедиец-иллюзионист", min: 4, max: 6 },
+    { n: "Горгомедиец-охотник", min: 5, max: 7 },
+    { n: "Горгомедиец-гончая", min: 6, max: 8 },
+    { n: "Горгомедиец-змей", min: 7, max: 9 },
+    { n: "Горгомедиец-вестник", min: 8, max: 10 },
+    { n: "Гарпия", min: 3, max: 5 },
+    { n: "Гарпия-королева", min: 7, max: 9 },
+    { n: "Древостения", min: 4, max: 6 },
+    { n: "Драконохвост", min: 1, max: 3 },
+    { n: "Дракарис лучник", min: 2, max: 4 },
+    { n: "Дикий волк", min: 3, max: 5 },
+    { n: "Еманджа", min: 2, max: 4 },
+    { n: "Ерим", min: 1, max: 3 },
+    { n: "Жрунец грибной Синий шляпник", min: 1, max: 3 },
+    { n: "Жрунец грибной Белый шляпник", min: 1, max: 3 },
+    { n: "Жрунец грибной Коричневый шляпник", min: 1, max: 3 },
+    { n: "Жрунец грибной Мухоморник", min: 2, max: 4 },
+    { n: "Жрунец грибной Серый серебристик", min: 2, max: 4 },
+    { n: "Жрунец грибной Обманщик", min: 3, max: 5 },
+    { n: "Залурница", min: 2, max: 4 },
+    { n: "Злобное древо", min: 1, max: 3 },
+    { n: "Инеевая дипловица земли", min: 1, max: 3 },
+    { n: "Инеевая дипловица воздуха", min: 1, max: 3 },
+    { n: "Инеевая дипловица энергии", min: 1, max: 3 },
+    { n: "Инеевая дипловица воды", min: 1, max: 3 },
+    { n: "Инеевая дипловица огня", min: 1, max: 3 },
+    { n: "Йермавник", min: 2, max: 4 },
+    { n: "Йормунд", min: 1, max: 3 },
+    { n: "Квалистрина", min: 1, max: 3 },
+    { n: "Кумо-воин", min: 1, max: 3 },
+    { n: "Кумо-защитник", min: 2, max: 4 },
+    { n: "Кумо-шаман", min: 3, max: 5 },
+    { n: "Кугу-Куду", min: 4, max: 6 },
+    { n: "Лавовый носорог", min: 2, max: 4 },
+    { n: "Ламия", min: 1, max: 3 },
+    { n: "Мутировавший пчелиный солдат", min: 2, max: 4 },
+    { n: "Мертвый солдат Страж древа", min: 1, max: 3 },
+    { n: "Мертвый дух древа", min: 2, max: 4 },
+    { n: "Мертвый шаман древа" },
+    { n: "Мертвый медиум древа" },
+    { n: "Мглистый рыбовник", min: 1, max: 3 },
+    { n: "Мутировавшая медуза", min: 2, max: 4 },
+    { n: "Ночной вергермин", min: 2, max: 4 },
+    { n: "Неберус морской", min: 3, max: 5 },
+    { n: "Пиявочник", min: 1, max: 3 },
+    { n: "Повелитель глубин", min: 10, max: 10 },
+    { n: "Проклятье леса", min: 4, max: 6 },
+    { n: "Плотоядная тюльпаница", min: 3, max: 5 },
+    { n: "Рудильщик", min: 1, max: 3 },
+    { n: "Ранзморфус", min: 3, max: 5 },
+    { n: "Сияющий алушник", min: 2, max: 4 },
+    { n: "Скорпивидный уронос", min: 1, max: 3 },
+    { n: "Темнистый глубинарх", min: 3, max: 6 },
+    { n: "Темнистный светящийся глубинарх", min: 3, max: 6 },
+    { n: "Туманник-воин", min: 1, max: 3 },
+    { n: "Туманник-заклинательница", min: 2, max: 4 },
+    { n: "Туманник-шаман", min: 5, max: 7 },
+    { n: "Турль", min: 1, max: 3 },
+    { n: "Фиврос", min: 1, max: 3 },
+    { n: "Хищный грифус", min: 1, max: 3 },
+    { n: "Ханоёсэ", min: 1, max: 3 },
+    { n: "Шаровидный обструктор", min: 2, max: 4 },
+    { n: "Ядовитая аркхазия", min: 1, max: 3 },
+    ];
+
+    /* ——— Утилиты ——— */
+    function fmtInt(x) {
+      var s = Math.round(x).toString(10);
+      var out = '', c = 0;
+      for (var i = s.length - 1; i >= 0; i--) {
+        out = s[i] + out;
+        c++;
+        if (c % 3 === 0 && i > 0) out = '\u00A0' + out;
+      }
+      return out;
+    }
+
+    function clampInt(v, min, max, fallback) {
+      var n = parseInt(v, 10);
+      if (isNaN(n)) return fallback;
+      if (n < min) return min;
+      if (n > max) return max;
+      return n;
+    }
+
+        /* ——— Калькулятор 1: опыт и урон ——— */
+    var mInput = document.getElementById('monster-input');
+    var mList = document.getElementById('monster-list');
+    var mHint = document.getElementById('monster-hint');
+    var lvlSel = document.getElementById('level-select');
+    var lvlHint = document.getElementById('level-hint');
+    var expSel = document.getElementById('exp-select');
+    var dmgSel = document.getElementById('dmg-select');
+    var cntInput = document.getElementById('count-input');
+    var cntMinus = document.getElementById('count-minus');
+    var cntPlus = document.getElementById('count-plus');
+    var mPlaceholder = document.getElementById('monster-placeholder');
+    var rowExp = document.getElementById('row-exp');
+    var rowDmg = document.getElementById('row-dmg');
+    var expValue = document.getElementById('exp-value');
+    var expFormula = document.getElementById('exp-formula');
+    var dmgValue = document.getElementById('dmg-value');
+    var dmgFormula = document.getElementById('dmg-formula');
+    var mClear = document.getElementById('monster-clear');
+
+    var current = null;   // выбранный монстр {n, min, max}
+    var activeIdx = -1;   // подсвеченный пункт списка подсказок
+
+    function norm(s) {
+      var map = { 'ё': 'е', 'й': 'и', 'ъ': '', 'ь': '' };
+      var r = '';
+      s = s.toLowerCase();
+      for (var i = 0; i < s.length; i++) {
+        var ch = s[i];
+        r += (ch in map) ? map[ch] : ch;
+      }
+      return r;
+    }
+
+    function search(q) {
+      var nq = norm(q.trim());
+      if (!nq) return [];
+      var starts = [], incl = [];
+      for (var i = 0; i < MONSTERS.length; i++) {
+        var nn = norm(MONSTERS[i].n);
+        if (nn.indexOf(nq) === 0) starts.push(i);
+        else if (nn.indexOf(nq) !== -1) incl.push(i);
+      }
+      return starts.concat(incl).slice(0, 12);
+    }
+
+    function lvlLabel(m) {
+      if (m.min == null) return 'уровни не указаны';
+      if (m.min === m.max) return m.min + ' ур.';
+      return m.min + '–' + m.max + ' ур.';
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, function (c) {
+        return { '&': '&', '<': '<', '>': '>', '"': '"', "'": '&#39;' }[c];
+      });
+    }
+
+    function markMatch(name, q) {
+      var t = norm(q.trim());
+      if (!t) return escapeHtml(name);
+      var idx = norm(name).indexOf(t);
+      if (idx === -1) return escapeHtml(name);
+      return escapeHtml(name.slice(0, idx)) +
+        '<span class="combo-mark">' + escapeHtml(name.slice(idx, idx + t.length)) + '</span>' +
+        escapeHtml(name.slice(idx + t.length));
+    }
+    function renderList() {
+      var q = mInput.value;
+      var hits = search(q);
+      activeIdx = -1;
+      if (!q.trim()) { mList.innerHTML = ''; closeList(); return; }
+      if (hits.length === 0) {
+        mList.innerHTML = '<div class="combo-empty">Ничего не найдено</div>';
+        mList.classList.add('open');
+        return;
+      }
+      var html = '';
+      for (var k = 0; k < hits.length; k++) {
+        var m = MONSTERS[hits[k]];
+        html += '<div class="combo-item' + (m.min == null ? ' none-lvl' : '') + '" data-i="' + hits[k] + '" role="option">' +
+          '<span>' + markMatch(m.n, q) + '</span>' +
+          '<span class="lvl">' + lvlLabel(m) + '</span></div>';
+      }
+      mList.innerHTML = html;
+      mList.classList.add('open');
+    }
+
+    function closeList() { mList.classList.remove('open'); activeIdx = -1; }
+
+    function pick(i) {
+      var m = MONSTERS[i];
+      if (!m) return;
+      current = m;
+      mInput.value = m.n;
+      closeList();
+      expSel.value = '1';
+      dmgSel.value = '10';
+      cntInput.value = '1';
+      buildLevelOptions();
+      recalc1();
+    }
+
+    function buildLevelOptions() {
+      lvlSel.innerHTML = '';
+      if (current == null || current.min == null) {
+        lvlSel.disabled = true;
+        lvlSel.innerHTML = '<option value="">' + (current ? 'уровни не указаны' : '— сначала выберите монстра —') + '</option>';
+        lvlSel.value = '';
+        lvlHint.textContent = current ? 'В пресете нет данных об уровнях этого монстра' : 'Диапазон уровней выбранного монстра';
+        return;
+      }
+      lvlSel.disabled = false;
+      for (var l = current.min; l <= current.max; l++) {
+        var o = document.createElement('option');
+        o.value = String(l);
+        o.textContent = l + ' ур.';
+        lvlSel.appendChild(o);
+      }
+      lvlSel.value = String(current.min);
+      lvlHint.textContent = 'От ' + current.min + ' до ' + current.max + ' ур., по умолчанию — минимальный';
+    }
+    function recalc1() {
+      if (current == null) {
+        mPlaceholder.hidden = false;
+        rowExp.hidden = true;
+        rowDmg.hidden = true;
+        return;
+      }
+      var level = (current.min != null) ? clampInt(lvlSel.value, current.min, current.max, current.min) : 1;
+      var expPct = parseFloat(expSel.value);
+      var dmgPct = parseInt(dmgSel.value, 10);
+      var qty = clampInt(cntInput.value, 1, 999, 1);
+
+      var expOne = level * 100 * expPct;
+      var expAll = expOne * qty;
+      var dmgOne = level * 100 - 100 * (dmgPct / 100);
+      var dmgAll = dmgOne * qty;
+
+      mPlaceholder.hidden = true;
+      rowExp.hidden = false;
+      rowDmg.hidden = false;
+
+      expValue.textContent = fmtInt(expOne) + (qty > 1 ? ' × ' + qty + ' = ' + fmtInt(expAll) : '');
+      expFormula.textContent = current.n + ', ' + level + ' ур., опыт ' + Math.round(expPct * 100) + '%' +
+        (qty > 1 ? ', ' + qty + ' шт.' : '') + ' → ' + fmtInt(expOne) + ' за одного, всего ' + fmtInt(expAll);
+
+      dmgValue.textContent = fmtInt(dmgOne) + (qty > 1 ? ' × ' + qty + ' = ' + fmtInt(dmgAll) : '');
+      dmgFormula.textContent = current.n + ', ' + level + ' ур., урон ' + dmgPct + '%' +
+        (qty > 1 ? ', ' + qty + ' шт.' : '') + ' → ' + fmtInt(dmgOne) + ' за одного, всего ' + fmtInt(dmgAll);
+    }
+    /* ——— События калькулятора 1 ——— */
+    mInput.addEventListener('input', renderList);
+    mInput.addEventListener('focus', renderList);
+
+    mInput.addEventListener('keydown', function (e) {
+      var items = mList.querySelectorAll('.combo-item');
+      if (!mList.classList.contains('open') || items.length === 0) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeIdx = (activeIdx + 1) % items.length;
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeIdx = (activeIdx - 1 + items.length) % items.length;
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        pick(parseInt(items[activeIdx >= 0 ? activeIdx : 0].getAttribute('data-i'), 10));
+        return;
+      } else if (e.key === 'Escape') {
+        closeList();
+        return;
+      } else {
+        return;
+      }
+      for (var i = 0; i < items.length; i++) items[i].classList.toggle('active', i === activeIdx);
+      items[activeIdx].scrollIntoView({ block: 'nearest' });
+    });
+
+    mList.addEventListener('mousedown', function (e) {
+      var item = e.target.closest('.combo-item');
+      if (item) {
+        e.preventDefault();
+        pick(parseInt(item.getAttribute('data-i'), 10));
+      }
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.combo')) closeList();
+    });
+
+    lvlSel.addEventListener('change', recalc1);
+    expSel.addEventListener('change', recalc1);
+    dmgSel.addEventListener('change', recalc1);
+    cntInput.addEventListener('input', recalc1);
+
+    function setCount(v) {
+      cntInput.value = String(clampInt(v, 1, 999, 1));
+      recalc1();
+    }
+
+    cntMinus.addEventListener('click', function () { setCount(clampInt(cntInput.value, 1, 999, 1) - 1); });
+    cntPlus.addEventListener('click', function () { setCount(clampInt(cntInput.value, 1, 999, 1) + 1); });
+
+    mClear.addEventListener('click', function () {
+      current = null;
+      mInput.value = '';
+      closeList();
+      buildLevelOptions();
+      cntInput.value = '1';
+      expSel.value = '1';
+      dmgSel.value = '10';
+      recalc1();
+      mInput.focus();
+    });
+    /* ——— Калькулятор 2: пересчёт уровней ——— */
+    var l2Input = document.getElementById('lvl2-input');
+    var l2Minus = document.getElementById('lvl2-minus');
+    var l2Plus = document.getElementById('lvl2-plus');
+    var e2Input = document.getElementById('exp2-input');
+    var g2Input = document.getElementById('gain2-input');
+    var l2Placeholder = document.getElementById('lvl2-placeholder');
+    var row2Level = document.getElementById('row2-level');
+    var row2Rest = document.getElementById('row2-rest');
+    var l2Value = document.getElementById('lvl2-value');
+    var l2Formula = document.getElementById('lvl2-formula');
+    var r2Value = document.getElementById('rest2-value');
+    var r2Formula = document.getElementById('rest2-formula');
+    var l2Clear = document.getElementById('lvl2-clear');
+
+    var EXP_PER_LEVEL = 50;
+
+    function parseInt2(v, fallback) {
+      var n = parseInt(v, 10);
+      return isNaN(n) ? fallback : n;
+    }
+
+    function recalc2() {
+      var gainRaw = g2Input.value.trim();
+      if (gainRaw === '') {
+        l2Placeholder.hidden = false;
+        row2Level.hidden = true;
+        row2Rest.hidden = true;
+        return;
+      }
+      var gain = parseInt2(gainRaw, 0);
+      if (gain < 0) gain = 0;
+      var lvl = clampInt(l2Input.value, 1, 9999, 1);
+      var exp = clampInt(e2Input.value, 0, 49, 0);
+
+      var total = lvl * EXP_PER_LEVEL + exp + gain;
+      var newLvl = Math.floor(total / EXP_PER_LEVEL);
+      var rest = total % EXP_PER_LEVEL;
+
+      l2Placeholder.hidden = true;
+      row2Level.hidden = false;
+      row2Rest.hidden = false;
+
+      l2Value.textContent = String(newLvl);
+      l2Formula.textContent = lvl + ' ур. × 50 + ' + exp + ' + ' + fmtInt(gain) + ' = ' + fmtInt(total) + ' опыта → ' + newLvl + ' ур.';
+      r2Value.textContent = String(rest);
+      r2Formula.textContent = 'Остаток в пределах уровня: ' + rest + ' из 50';
+    }
+
+    function setL2(v) {
+      l2Input.value = String(clampInt(v, 1, 9999, 1));
+      recalc2();
+    }
+
+    l2Minus.addEventListener('click', function () { setL2(clampInt(l2Input.value, 1, 9999, 1) - 1); });
+    l2Plus.addEventListener('click', function () { setL2(clampInt(l2Input.value, 1, 9999, 1) + 1); });
+    l2Input.addEventListener('input', recalc2);
+    e2Input.addEventListener('input', recalc2);
+    g2Input.addEventListener('input', recalc2);
+
+    l2Clear.addEventListener('click', function () {
+      l2Input.value = '1';
+      e2Input.value = '0';
+      g2Input.value = '';
+      recalc2();
+      l2Input.focus();
+    });
+    /* ——— Инициализация ——— */
+    buildLevelOptions();
+    recalc1();
+    recalc2();
+
+  </script>
+</body>
+</html>
+
+
