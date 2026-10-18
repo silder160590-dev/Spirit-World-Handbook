@@ -1,4 +1,4 @@
-﻿    :root {
+:root {
       --paper-0: #fdf8ec;
       --paper-50: #f8efd9;
       --paper-100: #f1e3c4;
@@ -335,6 +335,3 @@
       .result-row .r-value { font-size: 1.5rem; }
       .result-row.total .r-value { font-size: 1.7rem; }
     }
-  </style>
-</head>
-<body>

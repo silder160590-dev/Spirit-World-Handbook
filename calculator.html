@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <title>Калькуляторы — Справочник Мира Духов</title>
-  <meta name="description" content="Калькуляторы опыта и урона по монстрам бестиария и пересчёта уровней.">
+  <meta name="description" content="Калькуляторы опыта и урона по монстрам бестиария, пересчёта уровней и расчёта ингредиентов для крафта.">
   <link rel="icon" type="image/png" href="./assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,7 @@
     <div class="wrap">
       <p class="kicker">Справочник Мира Духов</p>
       <h1>Калькуляторы</h1>
-      <p class="lead">Расчёт опыта и урона по монстрам бестиария и пересчёт уровней по опыту.</p>
+      <p class="lead">Расчёт опыта и урона по монстрам бестиария, пересчёт уровней и расчёт ингредиентов для крафта.</p>
     </div>
   </header>
 
@@ -38,7 +38,7 @@
                 <input type="text" id="monster-input" autocomplete="off" spellcheck="false" placeholder="Начните вводить имя…">
                 <div class="combo-list" id="monster-list" role="listbox" aria-label="Варианты монстров"></div>
               </div>
-              <p class="hint" id="monster-hint">Монстры из пресета бестиария (74 карточки)</p>
+              <p class="hint" id="monster-hint">Монстры из пресета бестиария (72 карточки)</p>
             </div>
 
             <div class="field">
@@ -95,12 +95,6 @@
               <span class="r-value" id="dmg-value">—</span>
               <span class="r-formula" id="dmg-formula"></span>
             </div>
-
-        <div class="result-row" id="row-loot">
-          <div class="r-label">Loot</div>
-          <div class="r-value" id="loot-value">&#8212;</div>
-          <div class="r-formula" id="loot-formula"></div>
-        </div>
             <div class="result-row" id="row-loot" hidden>
               <span class="r-label">Лут</span>
               <span class="r-value" id="loot-value">—</span>
@@ -166,11 +160,10 @@
         </div>
       </div>
     </section>
-
     <section id="craft">
       <div class="wrap">
         <h2 class="sec-title">Калькулятор крафта</h2>
-        <p class="sec-sub">Выберите рецепт и уровень — узнайте, сколько ингредиентов нужно.</p>
+        <p class="sec-sub">Выберите профессию, рецепт и уровень — узнайте, сколько ингредиентов нужно.</p>
         <div class="ornament" aria-hidden="true">✦ ✦ ✦</div>
 
         <div class="calc-card">
@@ -241,7 +234,6 @@
                 <tr>
                   <th>Ингредиент</th>
                   <th style="text-align:right">На 1 предмет</th>
-                  <th style="text-align:right">× Кол-во</th>
                   <th style="text-align:right">Всего</th>
                 </tr>
               </thead>
@@ -262,119 +254,6 @@
         </div>
       </div>
     </section>
-
-        </div>
-      </section>
-
-      <!-- Craft Calculator Section -->
-      <section id="craft">
-        <div class="wrap">
-          <h2 class="sec-title">Craft Calculator</h2>
-          <p class="sec-sub">Select a recipe - ingredient count is calculated</p>
-          <div class="ornament" aria-hidden="true">&#9733; &#9733; &#9733;</div>
-
-          <div class="calc-card">
-            <div class="fields">
-               <div class="field">
-                 <label for="recipe-select">Recipe</label>
-                 <select id="recipe-select">
-                   <option value="">-- Select a recipe --</option>
-                 </select>
-               </div>
-
-               <div class="field">
-                 <label for="recipe-qty">Quantity</label>
-                 <div class="stepper">
-                   <button type="button" id="recipe-qty-minus" aria-label="Decrease quantity">-</button>
-                   <input type="number" id="recipe-qty" inputmode="numeric" min="1" step="1" value="1" aria-label="Quantity">
-                   <button type="button" id="recipe-qty-plus" aria-label="Increase quantity">+</button>
-                 </div>
-               </div>
-            </div>
-
-            <div class="card-actions">
-              <button type="button" id="recipe-clear" class="btn-clear">Clear</button>
-            </div>
-
-            <div class="results">
-              <div class="result-row" id="recipe-results" hidden>
-                <div class="r-label">Result</div>
-                <div class="r-value" id="recipe-value"></div>
-                <div class="r-formula" id="recipe-formula"></div>
-              </div>
-
-              <div class="result-row" hidden>
-                <table class="craft-table" id="craft-table">
-                  <thead>
-                    <tr><th>Ingredient</th><th>Qty</th></tr>
-                  </thead>
-                  <tbody id="craft-tbody"></tbody>
-                </table>
-              </div>
-
-              <div class="result-row" hidden>
-                <button type="button" id="copy-btn" class="copy-btn">Copy ingredients</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-      </section>
-      <!-- Craft Calculator -->
-      <section id="craft">
-        <div class="wrap">
-          <h2 class="sec-title">Craft Calculator</h2>
-          <p class="sec-sub">Select a recipe - ingredient count is calculated</p>
-          <div class="ornament" aria-hidden="true">* * *</div>
-
-          <div class="calc-card">
-            <div class="fields">
-               <div class="field">
-                 <label for="recipe-select">Recipe</label>
-                 <select id="recipe-select">
-                   <option value="">-- Select a recipe --</option>
-                 </select>
-               </div>
-
-               <div class="field">
-                 <label for="recipe-qty">Quantity</label>
-                 <div class="stepper">
-                   <button type="button" id="recipe-qty-minus" aria-label="Decrease quantity">-</button>
-                   <input type="number" id="recipe-qty" inputmode="numeric" min="1" step="1" value="1" aria-label="Quantity">
-                   <button type="button" id="recipe-qty-plus" aria-label="Increase quantity">+</button>
-                 </div>
-               </div>
-            </div>
-
-            <div class="card-actions">
-              <button type="button" id="recipe-clear" class="btn-clear">Clear</button>
-            </div>
-
-            <div class="results">
-              <div class="result-row" id="recipe-results" hidden>
-                <div class="r-label">Result</div>
-                <div class="r-value" id="recipe-value"></div>
-                <div class="r-formula" id="recipe-formula"></div>
-              </div>
-
-              <div class="result-row" hidden>
-                <table class="craft-table" id="craft-table">
-                  <thead>
-                    <tr><th>Ingredient</th><th>Qty</th></tr>
-                  </thead>
-                  <tbody id="craft-tbody"></tbody>
-                </table>
-              </div>
-
-              <div class="result-row" hidden>
-                <button type="button" id="copy-btn" class="copy-btn">Copy ingredients</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
   </main>
 
   <footer>
@@ -384,13 +263,10 @@
       <p>Данные по монстрам взяты из пресета бестиария приложения.</p>
     </div>
   </footer>
+
   <script>
     'use strict';
 
-  </script>
-  <script src="./monsters-data.js"></script>
-  <script src="./recipes-data.js"></script>
-  <script>
     /* ——— Утилиты ——— */
     function fmtInt(x) {
       var s = Math.round(x).toString(10);
@@ -411,7 +287,7 @@
       return n;
     }
 
-        /* ——— Калькулятор 1: опыт и урон ——— */
+    /* ——— Калькулятор 1: опыт, урон и лут ——— */
     var mInput = document.getElementById('monster-input');
     var mList = document.getElementById('monster-list');
     var mHint = document.getElementById('monster-hint');
@@ -434,7 +310,7 @@
     var lootFormula = document.getElementById('loot-formula');
     var mClear = document.getElementById('monster-clear');
 
-    var current = null;   // выбранный монстр {n, min, max}
+    var current = null;   // выбранный монстр {n, min, max, loot}
     var activeIdx = -1;   // подсвеченный пункт списка подсказок
 
     function norm(s) {
@@ -481,6 +357,7 @@
         '<span class="combo-mark">' + escapeHtml(name.slice(idx, idx + t.length)) + '</span>' +
         escapeHtml(name.slice(idx + t.length));
     }
+
     function renderList() {
       var q = mInput.value;
       var hits = search(q);
@@ -536,11 +413,13 @@
       lvlSel.value = String(current.min);
       lvlHint.textContent = 'От ' + current.min + ' до ' + current.max + ' ур., по умолчанию — минимальный';
     }
+
     function recalc1() {
       if (current == null) {
         mPlaceholder.hidden = false;
         rowExp.hidden = true;
         rowDmg.hidden = true;
+        rowLoot.hidden = true;
         return;
       }
       var level = (current.min != null) ? clampInt(lvlSel.value, current.min, current.max, current.min) : 1;
@@ -561,35 +440,36 @@
       expFormula.textContent = current.n + ', ' + level + ' ур., опыт ' + Math.round(expPct * 100) + '%' +
         (qty > 1 ? ', ' + qty + ' шт.' : '') + ' → ' + fmtInt(expOne) + ' за одного, всего ' + fmtInt(expAll);
 
-      dmgValue.textContent = fmtInt(dmgOne);
-      dmgFormula.textContent = current.n + ', lvl ' + level + ', ' + dmgPct + '% damage' +
-        (qty > 1 ? ', ' + qty + ' pcs' : '') + ' -> ' + fmtInt(dmgOne) + ' per one, ' + fmtInt(dmgAll) + ' total';
+      dmgValue.textContent = fmtInt(dmgOne) + (qty > 1 ? ' × ' + qty + ' = ' + fmtInt(dmgAll) : '');
+      dmgFormula.textContent = current.n + ', ' + level + ' ур., урон ' + dmgPct + '%' +
+        (qty > 1 ? ', ' + qty + ' шт.' : '') + ' → ' + fmtInt(dmgOne) + ' за одного, всего ' + fmtInt(dmgAll);
 
-      /* Лут */
+      /* Лут: ожидаемое количество = кол-во монстров × шанс/100 */
       var loot = current.loot || [];
       rowLoot.hidden = loot.length === 0;
       if (loot.length === 0) {
-        lootValue.textContent = '-';
-        lootFormula.textContent = 'No loot drops';
-      } else {
-        var lines = [];
-        for (var j = 0; j < loot.length; j++) {
-          var item = loot[j];
-          var name = item[0];
-          var chance = item[1];
-          var expected = qty * (chance / 100);
-          if (chance === 100) {
-            lines.push(name + ': ' + qty + ' pcs');
-          } else if (expected >= 1) {
-            lines.push(name + ': ' + chance + '% (expected ' + Math.round(expected) + ' pcs)');
-          } else {
-            lines.push(name + ': ' + chance + '% (expected ' + expected.toFixed(2) + ' pcs)');
-          }
-        }
-        lootValue.textContent = lines.join(', ');
-        lootFormula.textContent = 'From killing ' + qty + ' monsters';
+        lootValue.textContent = '—';
+        lootFormula.textContent = 'У монстра нет лута';
+        return;
       }
+      var lines = [];
+      for (var j = 0; j < loot.length; j++) {
+        var item = loot[j];
+        var name = item[0];
+        var chance = item[1];
+        var expected = qty * (chance / 100);
+        if (chance === 100) {
+          lines.push(name + ': ' + qty + ' шт.');
+        } else if (expected >= 1) {
+          lines.push(name + ': ' + chance + '% (≈' + Math.round(expected) + ' шт.)');
+        } else {
+          lines.push(name + ': ' + chance + '% (≈' + expected.toFixed(2) + ' шт.)');
+        }
+      }
+      lootValue.textContent = lines.join(', ');
+      lootFormula.textContent = 'При убийстве ' + qty + ' шт. — ожидаемое количество';
     }
+
     /* ——— События калькулятора 1 ——— */
     mInput.addEventListener('input', renderList);
     mInput.addEventListener('focus', renderList);
@@ -653,6 +533,7 @@
       recalc1();
       mInput.focus();
     });
+
     /* ——— Калькулятор 2: пересчёт уровней ——— */
     var l2Input = document.getElementById('lvl2-input');
     var l2Minus = document.getElementById('lvl2-minus');
@@ -720,6 +601,7 @@
       recalc2();
       l2Input.focus();
     });
+
     /* ——— Инициализация ——— */
     buildLevelOptions();
     recalc1();
@@ -729,5 +611,4 @@
   <script src="./craft-calculator.js"></script>
 </body>
 </html>
-
 

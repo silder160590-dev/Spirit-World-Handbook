@@ -1,126 +1,214 @@
-    /* Craft Calculator Logic */
-    (function() {
-      var recipeSelect = document.getElementById('recipe-select');
-      var recipeClear = document.getElementById('recipe-clear');
-      var recipeQty = document.getElementById('recipe-qty');
-      var recipeQtyMinus = document.getElementById('recipe-qty-minus');
-      var recipeQtyPlus = document.getElementById('recipe-qty-plus');
-      var recipeResults = document.getElementById('recipe-results');
-      var recipeValue = document.getElementById('recipe-value');
-      var recipeFormula = document.getElementById('recipe-formula');
-      var copyBtn = document.getElementById('copy-btn');
-      var craftTable = document.getElementById('craft-table');
-      var craftTbody = document.getElementById('craft-tbody');
+/* Craft Calculator Logic */
+(function () {
+  'use strict';
 
-      var selectedRecipe = null;
+  var profSelect = document.getElementById('craft-profession');
+  var recipeSelect = document.getElementById('craft-recipe');
+  var levelSelect = document.getElementById('craft-level');
+  var qtyInput = document.getElementById('craft-qty');
+  var qtyMinus = document.getElementById('craft-qty-minus');
+  var qtyPlus = document.getElementById('craft-qty-plus');
+  var placeholder = document.getElementById('craft-placeholder');
+  var craftTable = document.getElementById('craft-table');
+  var craftTbody = document.getElementById('craft-tbody');
+  var rowTotal = document.getElementById('row-craft-total');
+  var totalValue = document.getElementById('craft-total-value');
+  var totalFormula = document.getElementById('craft-total-formula');
+  var copyBtn = document.getElementById('craft-copy');
+  var clearBtn = document.getElementById('craft-clear');
 
-      function clampInt(v, min, max, fallback) {
-        var n = parseInt(v, 10);
-        if (isNaN(n)) n = fallback;
-        return Math.max(min, Math.min(max, n));
+  /* Уровни рецептов: шаг 5, после 40 сразу 50 — как в игре */
+  var RECIPE_LEVELS = [1, 5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100];
+  var MAX_RECIPE_LEVEL = RECIPE_LEVELS[RECIPE_LEVELS.length - 1];
+
+  var PROFESSION_LABELS = {
+    alchemist: 'Зельевар',
+    enchanter: 'Заклинатель',
+    cook: 'Кулинар',
+    jeweler: 'Ювелир',
+  };
+
+  function fmtInt(v) {
+    var s = Math.round(v).toString(10);
+    var out = '', c = 0;
+    for (var i = s.length - 1; i >= 0; i--) {
+      out = s[i] + out;
+      c++;
+      if (c % 3 === 0 && i > 0) out = '\u00A0' + out;
+    }
+    return out;
+  }
+
+  function clampInt(v, min, max, fallback) {
+    var n = parseInt(v, 10);
+    if (isNaN(n)) return fallback;
+    if (n < min) return min;
+    if (n > max) return max;
+    return n;
+  }
+
+  /* Индекс уровня в RECIPE_LEVELS определяет множитель: 1 ур. = ×1, 5 ур. = ×2, ... 100 ур. = ×20 */
+  function levelStep(level) {
+    var idx = RECIPE_LEVELS.indexOf(level);
+    return idx === -1 ? 1 : idx + 1;
+  }
+
+  /* Ингредиенты рецепта на выбранном уровне: колонка [имя, фактор, от, до]
+     входит, если от <= уровень <= до; одинаковые имена суммируются. */
+  function ingredientsFor(recipe, level) {
+    var map = {};   // имя -> количество на 1 предмет
+    var order = []; // порядок первого появления
+    var cols = recipe.columns || [];
+    for (var i = 0; i < cols.length; i++) {
+      var col = cols[i];
+      var name = col[0];
+      var factor = col[1];
+      var from = col.length > 2 ? col[2] : RECIPE_LEVELS[0];
+      var to = col.length > 3 ? col[3] : MAX_RECIPE_LEVEL;
+      if (level < from || level > to) continue;
+      if (!(name in map)) {
+        map[name] = 0;
+        order.push(name);
       }
+      map[name] += factor * levelStep(level);
+    }
+    var out = [];
+    for (var j = 0; j < order.length; j++) {
+      out.push([order[j], map[order[j]]]);
+    }
+    return out;
+  }
 
-      function fmtInt(v) {
-        return v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  var selectedRecipe = null;
+
+  function fillRecipes() {
+    var prof = profSelect.value;
+    recipeSelect.innerHTML = '';
+    var placeholderOpt = document.createElement('option');
+    placeholderOpt.value = '';
+    placeholderOpt.textContent = prof ? '— выберите рецепт —' : '— сначала выберите профессию —';
+    recipeSelect.appendChild(placeholderOpt);
+
+    var count = 0;
+    for (var i = 0; i < PRESET_RECIPES.length; i++) {
+      var r = PRESET_RECIPES[i];
+      if (prof && r.profession !== prof) continue;
+      var opt = document.createElement('option');
+      opt.value = String(i);
+      opt.textContent = r.name + (prof ? '' : ' — ' + (PROFESSION_LABELS[r.profession] || r.profession));
+      recipeSelect.appendChild(opt);
+      count++;
+    }
+    recipeSelect.disabled = !prof || count === 0;
+    if (count === 0) {
+      placeholderOpt.textContent = '— нет рецептов —';
+    }
+    selectedRecipe = null;
+    levelSelect.disabled = true;
+    recalc();
+  }
+
+  function onRecipeChange() {
+    var idx = parseInt(recipeSelect.value, 10);
+    selectedRecipe = (!isNaN(idx) && PRESET_RECIPES[idx]) ? PRESET_RECIPES[idx] : null;
+    levelSelect.disabled = !selectedRecipe;
+    recalc();
+  }
+
+  function recalc() {
+    var qty = clampInt(qtyInput.value, 1, 999, 1);
+    qtyInput.value = String(qty);
+
+    if (!selectedRecipe) {
+      placeholder.hidden = false;
+      craftTable.hidden = true;
+      rowTotal.hidden = true;
+      totalFormula.textContent = '';
+      return;
+    }
+
+    var level = clampInt(levelSelect.value, 1, 100, 1);
+    var ings = ingredientsFor(selectedRecipe, level);
+
+    placeholder.hidden = true;
+    craftTable.hidden = false;
+    rowTotal.hidden = false;
+
+    var rowsHtml = '';
+    var total = 0;
+    for (var i = 0; i < ings.length; i++) {
+      var name = ings[i][0];
+      var perOne = ings[i][1];
+      var all = perOne * qty;
+      total += all;
+      rowsHtml += '<tr><td class="ing-name">' + name + '</td>' +
+        '<td class="ing-qty">' + fmtInt(perOne) + '</td>' +
+        '<td class="ing-qty">' + fmtInt(all) + '</td></tr>';
+    }
+    craftTbody.innerHTML = rowsHtml;
+
+    totalValue.textContent = fmtInt(total);
+    var profLabel = PROFESSION_LABELS[selectedRecipe.profession] || selectedRecipe.profession;
+    totalFormula.textContent = selectedRecipe.name + ' (' + profLabel + '), ' + level + ' ур. рецепта' +
+      (qty > 1 ? ', ' + qty + ' шт.' : '') + ' — ' + ings.length + ' ингредиентов, всего ' + fmtInt(total);
+  }
+
+  profSelect.addEventListener('change', fillRecipes);
+  recipeSelect.addEventListener('change', onRecipeChange);
+  levelSelect.addEventListener('change', recalc);
+  qtyInput.addEventListener('input', recalc);
+
+  qtyMinus.addEventListener('click', function () {
+    qtyInput.value = String(clampInt(qtyInput.value, 1, 999, 1) - 1);
+    recalc();
+  });
+
+  qtyPlus.addEventListener('click', function () {
+    qtyInput.value = String(clampInt(qtyInput.value, 1, 999, 1) + 1);
+    recalc();
+  });
+
+  function resetResults() {
+    placeholder.hidden = false;
+    craftTable.hidden = true;
+    rowTotal.hidden = true;
+    totalFormula.textContent = '';
+  }
+
+  copyBtn.addEventListener('click', function () {
+    if (!selectedRecipe || !craftTbody.innerHTML) return;
+    var text = selectedRecipe.name + ' (' + (PROFESSION_LABELS[selectedRecipe.profession] || selectedRecipe.profession) +
+      '), ' + clampInt(levelSelect.value, 1, 100, 1) + ' ур. × ' + clampInt(qtyInput.value, 1, 999, 1) + '\n';
+    var rows = craftTbody.querySelectorAll('tr');
+    for (var i = 0; i < rows.length; i++) {
+      var cells = rows[i].querySelectorAll('td');
+      if (cells.length >= 3) {
+        text += cells[0].textContent.trim() + ': ' + cells[2].textContent.trim() + '\n';
       }
+    }
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
 
-      function renderRecipeSelect() {
-        recipeSelect.innerHTML = '<option value="">-- Select a recipe --</option>';
-        for (var i = 0; i < PRESET_RECIPES.length; i++) {
-          var opt = document.createElement('option');
-          opt.value = PRESET_RECIPES[i].result;
-          opt.textContent = PRESET_RECIPES[i].name || PRESET_RECIPES[i].result;
-          recipeSelect.appendChild(opt);
-        }
-      }
+    copyBtn.textContent = 'Скопировано!';
+    copyBtn.classList.add('copied');
+    setTimeout(function () {
+      copyBtn.textContent = '📋 Копировать';
+      copyBtn.classList.remove('copied');
+    }, 2000);
+  });
 
-      function getRecipeByName(name) {
-        for (var i = 0; i < PRESET_RECIPES.length; i++) {
-          if (PRESET_RECIPES[i].result === name) return PRESET_RECIPES[i];
-        }
-        return null;
-      }
+  clearBtn.addEventListener('click', function () {
+    profSelect.value = '';
+    fillRecipes();
+    levelSelect.value = '1';
+    qtyInput.value = '1';
+    resetResults();
+    profSelect.focus();
+  });
 
-      function recalc3() {
-        var qty = clampInt(recipeQty.value, 1, 999, 1);
-        recipeQty.value = String(qty);
-
-        if (!selectedRecipe || !selectedRecipe.ingredients || selectedRecipe.ingredients.length === 0) {
-          craftTable.hidden = true;
-          recipeResults.hidden = true;
-          return;
-        }
-
-        var ingredientsHtml = '';
-        for (var i = 0; i < selectedRecipe.ingredients.length; i++) {
-          var ing = selectedRecipe.ingredients[i];
-          var ingName = ing[0];
-          var ingQty = ing[1] * qty;
-          ingredientsHtml += '<tr><td class="ing-name">' + ingName + '</td><td class="ing-qty">' + fmtInt(ingQty) + '</td></tr>';
-        }
-        craftTbody.innerHTML = ingredientsHtml;
-        craftTable.hidden = false;
-
-        recipeValue.textContent = selectedRecipe.result + ' x' + qty;
-        recipeFormula.textContent = selectedRecipe.name || selectedRecipe.result;
-        recipeResults.hidden = false;
-      }
-
-      function updateRecipeSelect() {
-        var val = recipeSelect.value;
-        selectedRecipe = null;
-        if (val) {
-          selectedRecipe = getRecipeByName(val);
-        }
-        recalc3();
-      }
-
-      recipeSelect.addEventListener('change', updateRecipeSelect);
-      recipeQty.addEventListener('input', recalc3);
-
-      recipeQtyMinus.addEventListener('click', function () {
-        recipeQty.value = String(clampInt(recipeQty.value, 1, 999, 1) - 1);
-        recalc3();
-      });
-
-      recipeQtyPlus.addEventListener('click', function () {
-        recipeQty.value = String(clampInt(recipeQty.value, 1, 999, 1) + 1);
-        recalc3();
-      });
-
-      recipeClear.addEventListener('click', function () {
-        recipeSelect.selectedIndex = 0;
-        selectedRecipe = null;
-        recipeQty.value = '1';
-        craftTable.hidden = true;
-        recipeResults.hidden = true;
-        recipeSelect.focus();
-      });
-
-      copyBtn.addEventListener('click', function () {
-        if (!selectedRecipe || !craftTbody.innerHTML) return;
-        var text = '';
-        var rows = craftTbody.querySelectorAll('tr');
-        for (var i = 0; i < rows.length; i++) {
-          var cells = rows[i].querySelectorAll('td');
-          if (cells.length >= 2) {
-            text += cells[0].textContent.trim() + ': ' + cells[1].textContent.trim() + '\n';
-          }
-        }
-        var textarea = document.createElement('textarea');
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-
-        copyBtn.textContent = 'Copied!';
-        copyBtn.classList.add('copied');
-        setTimeout(function () {
-          copyBtn.textContent = 'Copy';
-          copyBtn.classList.remove('copied');
-        }, 2000);
-      });
-
-      renderRecipeSelect();
-    })();
+  fillRecipes();
+})();
