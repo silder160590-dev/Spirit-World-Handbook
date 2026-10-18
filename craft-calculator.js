@@ -154,6 +154,7 @@
   }
 
   profSelect.addEventListener('change', fillRecipes);
+  profSelect.addEventListener('input', fillRecipes);
   recipeSelect.addEventListener('change', onRecipeChange);
   levelSelect.addEventListener('change', recalc);
   qtyInput.addEventListener('input', recalc);

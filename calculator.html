@@ -97,7 +97,7 @@
             </div>
             <div class="result-row" id="row-loot" hidden>
               <span class="r-label">Лут</span>
-              <span class="r-value" id="loot-value">—</span>
+              <span class="r-value loot-value" id="loot-value">—</span>
               <span class="r-formula" id="loot-formula"></span>
             </div>
           </div>
@@ -454,20 +454,11 @@
       }
       var lines = [];
       for (var j = 0; j < loot.length; j++) {
-        var item = loot[j];
-        var name = item[0];
-        var chance = item[1];
-        var expected = qty * (chance / 100);
-        if (chance === 100) {
-          lines.push(name + ': ' + qty + ' шт.');
-        } else if (expected >= 1) {
-          lines.push(name + ': ' + chance + '% (≈' + Math.round(expected) + ' шт.)');
-        } else {
-          lines.push(name + ': ' + chance + '% (≈' + expected.toFixed(2) + ' шт.)');
-        }
+        var name = loot[j][0];
+        lines.push(name + ': ' + qty);
       }
-      lootValue.textContent = lines.join(', ');
-      lootFormula.textContent = 'При убийстве ' + qty + ' шт. — ожидаемое количество';
+      lootValue.innerHTML = lines.join('<br>');
+      lootFormula.textContent = 'Всего позиций: ' + loot.length + ' × ' + qty + ' = ' + (loot.length * qty);
     }
 
     /* ——— События калькулятора 1 ——— */
