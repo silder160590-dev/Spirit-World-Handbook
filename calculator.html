@@ -98,7 +98,7 @@
             <div class="result-row" id="row-loot" hidden>
               <span class="r-label">Лут</span>
               <span class="r-value loot-value" id="loot-value">—</span>
-              <span class="r-formula" id="loot-formula"></span>
+              <button type="button" class="copy-btn loot-copy-btn" id="loot-copy" aria-label="Скопировать список лута">Копировать</button>
             </div>
           </div>
 
@@ -304,7 +304,7 @@
     var dmgFormula = document.getElementById('dmg-formula');
     var rowLoot = document.getElementById('row-loot');
     var lootValue = document.getElementById('loot-value');
-    var lootFormula = document.getElementById('loot-formula');
+    var lootCopy = document.getElementById('loot-copy');
     var mClear = document.getElementById('monster-clear');
 
     var current = null;   // выбранный монстр {n, min, max, loot}
@@ -446,17 +446,31 @@
       rowLoot.hidden = loot.length === 0;
       if (loot.length === 0) {
         lootValue.textContent = '—';
-        lootFormula.textContent = 'У монстра нет лута';
         return;
       }
       var lines = [];
       for (var j = 0; j < loot.length; j++) {
         var name = loot[j][0];
-        lines.push(name + ': ' + qty);
+        lines.push(name + ' ' + qty);
       }
-      lootValue.innerHTML = lines.join('<br>');
-      lootFormula.textContent = 'Всего позиций: ' + loot.length + ' × ' + qty + ' = ' + (loot.length * qty);
+      lootValue.textContent = lines.join('\n');
     }
+
+    lootCopy.addEventListener('click', function () {
+      if (!current || !current.loot || current.loot.length === 0) return;
+      var qty = clampInt(cntInput.value, 1, 999, 1);
+      var text = current.loot.map(function (item) { return item[0] + ' ' + qty; }).join('\n');
+      var textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      lootCopy.textContent = 'Скопировано';
+      setTimeout(function () { lootCopy.textContent = 'Копировать'; }, 1500);
+    });
 
     /* ——— События калькулятора 1 ——— */
     mInput.addEventListener('input', renderList);
