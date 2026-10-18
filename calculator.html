@@ -38,7 +38,6 @@
                 <input type="text" id="monster-input" autocomplete="off" spellcheck="false" placeholder="Начните вводить имя…">
                 <div class="combo-list" id="monster-list" role="listbox" aria-label="Варианты монстров"></div>
               </div>
-              <p class="hint" id="monster-hint">Монстры из пресета бестиария (72 карточки)</p>
             </div>
 
             <div class="field">
@@ -46,7 +45,6 @@
               <select id="level-select" disabled>
                 <option value="">— сначала выберите монстра —</option>
               </select>
-              <p class="hint" id="level-hint">Диапазон уровней выбранного монстра</p>
             </div>
 
             <div class="field">
@@ -56,7 +54,6 @@
                 <option value="0.75">75%</option>
                 <option value="0.5">50%</option>
               </select>
-              <p class="hint">Множитель опыта</p>
             </div>
 
             <div class="field">
@@ -69,7 +66,6 @@
                 <option value="50">50%</option>
                 <option value="60">60%</option>
               </select>
-              <p class="hint">Процент от базового урона</p>
             </div>
 
             <div class="field">
@@ -79,12 +75,10 @@
                 <input type="number" id="count-input" inputmode="numeric" min="1" step="1" value="1" aria-label="Количество">
                 <button type="button" id="count-plus" aria-label="Увеличить количество">+</button>
               </div>
-              <p class="hint">Сколько монстров</p>
             </div>
           </div>
 
           <div class="results" id="monster-results">
-            <p class="placeholder" id="monster-placeholder">Выберите монстра, чтобы увидеть расчёт.</p>
             <div class="result-row" id="row-exp" hidden>
               <span class="r-label">Опыт</span>
               <span class="r-value" id="exp-value">—</span>
@@ -124,19 +118,16 @@
                 <input type="number" id="lvl2-input" inputmode="numeric" min="1" step="1" value="1" aria-label="Уровень">
                 <button type="button" id="lvl2-plus" aria-label="Увеличить уровень">+</button>
               </div>
-              <p class="hint">Текущий уровень, по умолчанию 1</p>
             </div>
 
             <div class="field">
               <label for="exp2-input">Опыт</label>
               <input type="number" id="exp2-input" inputmode="numeric" min="0" max="49" step="1" value="0" aria-label="Опыт">
-              <p class="hint">Текущий опыт, от 0 до 49</p>
             </div>
 
             <div class="field">
               <label for="gain2-input">Начисление</label>
               <input type="number" id="gain2-input" inputmode="numeric" min="0" step="1" placeholder="—" aria-label="Начисление опыта">
-              <p class="hint">Сколько опыта начислено, по умолчанию пусто</p>
             </div>
           </div>
 
@@ -177,7 +168,6 @@
                 <option value="cook">Кулинар</option>
                 <option value="jeweler">Ювелир</option>
               </select>
-              <p class="hint">Фильтр по профессии крафта</p>
             </div>
 
             <div class="field">
@@ -185,7 +175,6 @@
               <select id="craft-recipe" disabled>
                 <option value="">— сначала выберите профессию —</option>
               </select>
-              <p class="hint">Выберите рецепт крафта</p>
             </div>
 
             <div class="field">
@@ -212,7 +201,6 @@
                 <option value="95">95</option>
                 <option value="100">100</option>
               </select>
-              <p class="hint">Уровень рецепта определяет количество ингредиентов</p>
             </div>
 
             <div class="field">
@@ -222,7 +210,6 @@
                 <input type="number" id="craft-qty" inputmode="numeric" min="1" step="1" value="1" aria-label="Количество">
                 <button type="button" id="craft-qty-plus" aria-label="Увеличить количество">+</button>
               </div>
-              <p class="hint">Сколько предметов крафтится</p>
             </div>
           </div>
 
@@ -278,15 +265,12 @@
     /* ——— Калькулятор 1: опыт, урон и лут ——— */
     var mInput = document.getElementById('monster-input');
     var mList = document.getElementById('monster-list');
-    var mHint = document.getElementById('monster-hint');
     var lvlSel = document.getElementById('level-select');
-    var lvlHint = document.getElementById('level-hint');
     var expSel = document.getElementById('exp-select');
     var dmgSel = document.getElementById('dmg-select');
     var cntInput = document.getElementById('count-input');
     var cntMinus = document.getElementById('count-minus');
     var cntPlus = document.getElementById('count-plus');
-    var mPlaceholder = document.getElementById('monster-placeholder');
     var rowExp = document.getElementById('row-exp');
     var rowDmg = document.getElementById('row-dmg');
     var expValue = document.getElementById('exp-value');
@@ -388,7 +372,6 @@
         lvlSel.disabled = true;
         lvlSel.innerHTML = '<option value="">' + (current ? 'уровни не указаны' : '— сначала выберите монстра —') + '</option>';
         lvlSel.value = '';
-        lvlHint.textContent = current ? 'В пресете нет данных об уровнях этого монстра' : 'Диапазон уровней выбранного монстра';
         return;
       }
       lvlSel.disabled = false;
@@ -399,12 +382,10 @@
         lvlSel.appendChild(o);
       }
       lvlSel.value = String(current.min);
-      lvlHint.textContent = 'От ' + current.min + ' до ' + current.max + ' ур., по умолчанию — минимальный';
     }
 
     function recalc1() {
       if (current == null) {
-        mPlaceholder.hidden = false;
         rowExp.hidden = true;
         rowDmg.hidden = true;
         rowLoot.hidden = true;
@@ -420,7 +401,6 @@
       var dmgOne = (level * 100 * dmgPct) / 100;
       var dmgAll = dmgOne * qty;
 
-      mPlaceholder.hidden = true;
       rowExp.hidden = false;
       rowDmg.hidden = false;
 
