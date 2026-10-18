@@ -8,7 +8,6 @@
   var qtyInput = document.getElementById('craft-qty');
   var qtyMinus = document.getElementById('craft-qty-minus');
   var qtyPlus = document.getElementById('craft-qty-plus');
-  var placeholder = document.getElementById('craft-placeholder');
   var craftOutput = document.getElementById('craft-output');
   var rowTotal = document.getElementById('row-craft-total');
   var copyBtn = document.getElementById('craft-copy');
@@ -145,7 +144,6 @@
     qtyInput.value = String(qty);
 
     if (!selectedRecipe) {
-      placeholder.hidden = false;
       craftOutput.hidden = true;
       rowTotal.hidden = true;
       return;
@@ -154,7 +152,6 @@
     var level = clampInt(levelSelect.value, 1, 100, 1);
     var ings = ingredientsFor(selectedRecipe, level);
 
-    placeholder.hidden = true;
     craftOutput.hidden = false;
     rowTotal.hidden = false;
 
@@ -178,7 +175,6 @@
   });
 
   function resetResults() {
-    placeholder.hidden = false;
     craftOutput.hidden = true;
     rowTotal.hidden = true;
   }

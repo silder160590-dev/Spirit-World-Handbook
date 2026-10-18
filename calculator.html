@@ -132,7 +132,6 @@
           </div>
 
           <div class="results" id="lvl2-results">
-            <p class="placeholder" id="lvl2-placeholder">Введите начисление, чтобы увидеть пересчёт.</p>
             <div class="result-row" id="row2-level" hidden>
               <span class="r-label">Новый уровень</span>
               <span class="r-value" id="lvl2-value">—</span>
@@ -214,8 +213,6 @@
           </div>
 
           <div class="results" id="craft-results">
-            <p class="placeholder" id="craft-placeholder">Выберите рецепт, чтобы увидеть расчёт.</p>
-
             <div class="craft-output" id="craft-output" hidden></div>
 
             <div class="result-row craft-summary" id="row-craft-total" hidden>
@@ -513,7 +510,6 @@
     var l2Plus = document.getElementById('lvl2-plus');
     var e2Input = document.getElementById('exp2-input');
     var g2Input = document.getElementById('gain2-input');
-    var l2Placeholder = document.getElementById('lvl2-placeholder');
     var row2Level = document.getElementById('row2-level');
     var row2Rest = document.getElementById('row2-rest');
     var l2Value = document.getElementById('lvl2-value');
@@ -532,7 +528,6 @@
     function recalc2() {
       var gainRaw = g2Input.value.trim();
       if (gainRaw === '') {
-        l2Placeholder.hidden = false;
         row2Level.hidden = true;
         row2Rest.hidden = true;
         return;
@@ -546,7 +541,6 @@
       var newLvl = Math.floor(total / EXP_PER_LEVEL);
       var rest = total % EXP_PER_LEVEL;
 
-      l2Placeholder.hidden = true;
       row2Level.hidden = false;
       row2Rest.hidden = false;
 
