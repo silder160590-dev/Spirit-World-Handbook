@@ -12,8 +12,6 @@
   var craftTable = document.getElementById('craft-table');
   var craftTbody = document.getElementById('craft-tbody');
   var rowTotal = document.getElementById('row-craft-total');
-  var totalValue = document.getElementById('craft-total-value');
-  var totalFormula = document.getElementById('craft-total-formula');
   var copyBtn = document.getElementById('craft-copy');
   var clearBtn = document.getElementById('craft-clear');
 
@@ -123,7 +121,6 @@
       placeholder.hidden = false;
       craftTable.hidden = true;
       rowTotal.hidden = true;
-      totalFormula.textContent = '';
       return;
     }
 
@@ -135,22 +132,15 @@
     rowTotal.hidden = false;
 
     var rowsHtml = '';
-    var total = 0;
     for (var i = 0; i < ings.length; i++) {
       var name = ings[i][0];
       var perOne = ings[i][1];
       var all = perOne * qty;
-      total += all;
       rowsHtml += '<tr><td class="ing-name">' + name + '</td>' +
         '<td class="ing-qty">' + fmtInt(perOne) + '</td>' +
         '<td class="ing-qty">' + fmtInt(all) + '</td></tr>';
     }
     craftTbody.innerHTML = rowsHtml;
-
-    totalValue.textContent = fmtInt(total);
-    var profLabel = PROFESSION_LABELS[selectedRecipe.profession] || selectedRecipe.profession;
-    totalFormula.textContent = selectedRecipe.name + ' (' + profLabel + '), ' + level + ' ур. рецепта' +
-      (qty > 1 ? ', ' + qty + ' шт.' : '') + ' — ' + ings.length + ' ингредиентов, всего ' + fmtInt(total);
   }
 
   profSelect.addEventListener('change', fillRecipes);
@@ -173,18 +163,16 @@
     placeholder.hidden = false;
     craftTable.hidden = true;
     rowTotal.hidden = true;
-    totalFormula.textContent = '';
   }
 
   copyBtn.addEventListener('click', function () {
     if (!selectedRecipe || !craftTbody.innerHTML) return;
-    var text = selectedRecipe.name + ' (' + (PROFESSION_LABELS[selectedRecipe.profession] || selectedRecipe.profession) +
-      '), ' + clampInt(levelSelect.value, 1, 100, 1) + ' ур. × ' + clampInt(qtyInput.value, 1, 999, 1) + '\n';
+    var text = '';
     var rows = craftTbody.querySelectorAll('tr');
     for (var i = 0; i < rows.length; i++) {
       var cells = rows[i].querySelectorAll('td');
       if (cells.length >= 3) {
-        text += cells[0].textContent.trim() + ': ' + cells[2].textContent.trim() + '\n';
+        text += cells[0].textContent.trim() + ' ' + cells[2].textContent.trim() + '\n';
       }
     }
     var textarea = document.createElement('textarea');
