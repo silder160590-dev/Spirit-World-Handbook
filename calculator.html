@@ -91,8 +91,7 @@
             </div>
             <div class="result-row" id="row-loot" hidden>
               <span class="r-label">Лут</span>
-              <span class="r-value loot-value" id="loot-value">—</span>
-              <button type="button" class="copy-btn loot-copy-btn" id="loot-copy" aria-label="Скопировать список лута">Копировать</button>
+              <span class="r-value" id="loot-value"><span class="r-value-text"></span><button type="button" class="copy-btn loot-copy-btn" id="loot-copy" aria-label="Скопировать список лута">Копировать</button></span>
             </div>
           </div>
 
@@ -212,12 +211,9 @@
             </div>
           </div>
 
-          <div class="results" id="craft-results">
-            <div class="craft-output" id="craft-output" hidden></div>
-
-            <div class="result-row craft-summary" id="row-craft-total" hidden>
-              <button type="button" class="copy-btn" id="craft-copy" aria-label="Скопировать список ингредиентов">📋 Копировать</button>
-            </div>
+          <div class="result-row" id="row-craft" hidden>
+            <span class="r-label">Ингредиенты</span>
+            <span class="r-value" id="craft-output"><span class="r-value-text"></span><button type="button" class="copy-btn" id="craft-copy" aria-label="Скопировать список ингредиентов">Копировать</button></span>
           </div>
 
           <div class="card-actions">
@@ -413,7 +409,7 @@
       var loot = current.loot || [];
       rowLoot.hidden = loot.length === 0;
       if (loot.length === 0) {
-        lootValue.textContent = '—';
+        lootValue.querySelector('.r-value-text').textContent = '—';
         return;
       }
       var lines = [];
@@ -421,13 +417,12 @@
         var name = loot[j][0];
         lines.push(name + ' ' + qty);
       }
-      lootValue.textContent = lines.join('\n');
+      lootValue.querySelector('.r-value-text').textContent = lines.join('\n');
     }
 
     lootCopy.addEventListener('click', function () {
       if (!current || !current.loot || current.loot.length === 0) return;
-      var qty = clampInt(cntInput.value, 1, 999, 1);
-      var text = current.loot.map(function (item) { return item[0] + ' ' + qty; }).join('\n');
+      var text = lootValue.querySelector('.r-value-text').textContent || '';
       var textarea = document.createElement('textarea');
       textarea.value = text;
       textarea.style.position = 'fixed';

@@ -266,41 +266,38 @@
       color: var(--ink-400);
     }
     #row-loot .r-value {
-      display: block;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
       min-width: 0;
       justify-self: stretch;
       text-align: left;
+    }
+
+    .r-value-text {
       font-family: var(--serif);
       font-size: 1rem;
       font-weight: 400;
-      line-height: 1.5;
+      line-height: 1.8;
       white-space: pre-line;
       overflow-wrap: anywhere;
       color: var(--ink-500);
-    }
-    #row-loot .loot-copy-btn {
-      grid-column: 2;
-      justify-self: end;
-      margin-top: 4px;
+      flex: 1;
+      min-width: 0;
     }
 
-    /* ——— Калькулятор крафта: список ингредиентов ——— */
-    .craft-output {
-      grid-column: 1;
-      display: block;
-      width: 100%;
-      margin-top: 10px;
-      font-size: 0.95rem;
-      font-family: var(--serif);
-      line-height: 1.5;
-      color: var(--ink-500);
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    #craft-results {
+    /* ——— Лут и крафт: единый стиль для result-row ——— */
+    #row-loot,
+    #row-craft {
       grid-template-columns: minmax(0, 70%) minmax(0, 1fr);
       align-items: start;
+    }
+    #row-loot .r-label,
+    #row-craft .r-label {
+      grid-column: 1 / -1;
+      justify-self: start;
+      font-weight: 500;
+      color: var(--ink-400);
     }
 
     .copy-btn {
@@ -325,15 +322,6 @@
       border-color: var(--gold-500);
     }
 
-    .result-row.craft-summary {
-      grid-column: 2;
-      grid-template-columns: 1fr;
-      gap: 0;
-      padding: 0;
-      background: transparent;
-      border: 0;
-      justify-items: end;
-    }
     footer {
       text-align: center;
       padding: 26px 20px 40px;
@@ -364,12 +352,15 @@
       .result-row .r-value { font-size: 1.5rem; }
       .result-row.total .r-value { font-size: 1.7rem; }
 
-      #row-loot .loot-copy-btn {
-        grid-column: 1;
-        justify-self: start;
+      #row-loot,
+      #row-craft {
+        grid-template-columns: 1fr;
       }
-      #craft-results { grid-template-columns: 1fr; }
-      #craft-results .craft-output,
-      .result-row.craft-summary { grid-column: 1; }
-      .result-row.craft-summary { justify-items: start; }
+      #row-loot .r-label,
+      #row-craft .r-label {
+        grid-column: 1;
+      }
+      .r-value-text {
+        font-size: 1.5rem;
+      }
     }
