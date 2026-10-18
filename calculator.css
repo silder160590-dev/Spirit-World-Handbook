@@ -284,34 +284,23 @@
       margin-top: 4px;
     }
 
-    /* ——— Калькулятор крафта: таблица ингредиентов ——— */
-    .craft-table {
+    /* ——— Калькулятор крафта: список ингредиентов ——— */
+    .craft-output {
+      grid-column: 1;
       width: 100%;
-      border-collapse: collapse;
       margin-top: 10px;
       font-size: 0.95rem;
+      font-family: var(--serif);
+      line-height: 1.5;
+      color: var(--ink-500);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
-    .craft-table th,
-    .craft-table td {
-      text-align: left;
-      padding: 6px 10px;
-      border-bottom: 1px solid var(--paper-200);
-    }
-    .craft-table th {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--ink-300);
-      font-weight: 700;
-    }
-    .craft-table td.ing-name { color: var(--ink-500); }
-    .craft-table td.ing-qty { font-family: var(--hand); font-weight: 700; color: var(--primary-700); text-align: right; }
 
     #craft-results {
       grid-template-columns: minmax(0, 70%) minmax(0, 1fr);
       align-items: start;
     }
-    #craft-results .craft-table { grid-column: 1; }
 
     .copy-btn {
       font-family: var(--serif);
@@ -379,7 +368,7 @@
         justify-self: start;
       }
       #craft-results { grid-template-columns: 1fr; }
-      #craft-results .craft-table,
+      #craft-results .craft-output,
       .result-row.craft-summary { grid-column: 1; }
       .result-row.craft-summary { justify-items: start; }
     }

@@ -9,8 +9,7 @@
   var qtyMinus = document.getElementById('craft-qty-minus');
   var qtyPlus = document.getElementById('craft-qty-plus');
   var placeholder = document.getElementById('craft-placeholder');
-  var craftTable = document.getElementById('craft-table');
-  var craftTbody = document.getElementById('craft-tbody');
+  var craftOutput = document.getElementById('craft-output');
   var rowTotal = document.getElementById('row-craft-total');
   var copyBtn = document.getElementById('craft-copy');
   var clearBtn = document.getElementById('craft-clear');
@@ -93,6 +92,18 @@
     return recipe.name;
   }
 
+  function craftText(recipe, level, qty, ings) {
+    var output = outputFor(recipe);
+    var effect = effectFor(recipe, level);
+    var text = '- производство = ' + qty + ' ' + output.toLowerCase();
+    if (effect) text += ' (' + effect + ')';
+    text += '\n';
+    for (var i = 0; i < ings.length; i++) {
+      text += (i === 0 ? '- ' : '') + fmtInt(ings[i][1] * qty) + ' ' + ings[i][0].toLowerCase() + '\n';
+    }
+    return text;
+  }
+
   var selectedRecipe = null;
 
   function fillRecipes() {
@@ -135,7 +146,7 @@
 
     if (!selectedRecipe) {
       placeholder.hidden = false;
-      craftTable.hidden = true;
+      craftOutput.hidden = true;
       rowTotal.hidden = true;
       return;
     }
@@ -144,19 +155,10 @@
     var ings = ingredientsFor(selectedRecipe, level);
 
     placeholder.hidden = true;
-    craftTable.hidden = false;
+    craftOutput.hidden = false;
     rowTotal.hidden = false;
 
-    var rowsHtml = '';
-    for (var i = 0; i < ings.length; i++) {
-      var name = ings[i][0];
-      var perOne = ings[i][1];
-      var all = perOne * qty;
-      rowsHtml += '<tr><td class="ing-name">' + name + '</td>' +
-        '<td class="ing-qty">' + fmtInt(perOne) + '</td>' +
-        '<td class="ing-qty">' + fmtInt(all) + '</td></tr>';
-    }
-    craftTbody.innerHTML = rowsHtml;
+    craftOutput.textContent = craftText(selectedRecipe, level, qty, ings);
   }
 
   profSelect.addEventListener('change', fillRecipes);
@@ -177,29 +179,13 @@
 
   function resetResults() {
     placeholder.hidden = false;
-    craftTable.hidden = true;
+    craftOutput.hidden = true;
     rowTotal.hidden = true;
   }
 
   copyBtn.addEventListener('click', function () {
-    if (!selectedRecipe || !craftTbody.innerHTML) return;
-    var qty = clampInt(qtyInput.value, 1, 999, 1);
-    var level = clampInt(levelSelect.value, 1, 100, 1);
-    var output = outputFor(selectedRecipe);
-    var effect = effectFor(selectedRecipe, level);
-    var text = '- производство = ' + qty + ' ' + output.toLowerCase();
-    if (effect) text += ' (' + effect + ')';
-    text += '\n';
-    var rows = craftTbody.querySelectorAll('tr');
-    var copiedIngredients = 0;
-    for (var i = 0; i < rows.length; i++) {
-      if (i < 2) continue;
-      var cells = rows[i].querySelectorAll('td');
-      if (cells.length >= 3) {
-        text += (copiedIngredients === 0 ? '- ' : '') + cells[2].textContent.trim() + ' ' + cells[0].textContent.trim().toLowerCase() + '\n';
-        copiedIngredients++;
-      }
-    }
+    if (!selectedRecipe || craftOutput.hidden || !craftOutput.textContent) return;
+    var text = craftOutput.textContent;
     var textarea = document.createElement('textarea');
     textarea.value = text;
     document.body.appendChild(textarea);
