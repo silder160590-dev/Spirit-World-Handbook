@@ -255,11 +255,12 @@
     .placeholder { color: var(--ink-200); font-style: italic; text-align: center; padding: 8px 0 2px; }
 
     #row-loot {
-      grid-template-columns: minmax(0, 1fr);
+      grid-template-columns: minmax(0, 70%) minmax(0, 1fr);
       align-items: start;
       justify-items: stretch;
     }
     #row-loot .r-label {
+      grid-column: 1 / -1;
       justify-self: start;
       font-weight: 500;
       color: var(--ink-400);
@@ -278,8 +279,8 @@
       color: var(--ink-500);
     }
     #row-loot .loot-copy-btn {
-      grid-column: 1;
-      justify-self: start;
+      grid-column: 2;
+      justify-self: end;
       margin-top: 4px;
     }
 
@@ -306,6 +307,12 @@
     .craft-table td.ing-name { color: var(--ink-500); }
     .craft-table td.ing-qty { font-family: var(--hand); font-weight: 700; color: var(--primary-700); text-align: right; }
 
+    #craft-results {
+      grid-template-columns: minmax(0, 70%) minmax(0, 1fr);
+      align-items: start;
+    }
+    #craft-results .craft-table { grid-column: 1; }
+
     .copy-btn {
       font-family: var(--serif);
       font-size: 0.8rem;
@@ -328,8 +335,15 @@
       border-color: var(--gold-500);
     }
 
-    .result-row.craft-summary { grid-template-columns: auto 1fr auto; gap: 6px 12px; }
-    .result-row.craft-summary .r-label { font-size: 0.9rem; }
+    .result-row.craft-summary {
+      grid-column: 2;
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      justify-items: end;
+    }
     footer {
       text-align: center;
       padding: 26px 20px 40px;
@@ -359,4 +373,13 @@
       .result-row { grid-template-columns: 1fr; }
       .result-row .r-value { font-size: 1.5rem; }
       .result-row.total .r-value { font-size: 1.7rem; }
+
+      #row-loot .loot-copy-btn {
+        grid-column: 1;
+        justify-self: start;
+      }
+      #craft-results { grid-template-columns: 1fr; }
+      #craft-results .craft-table,
+      .result-row.craft-summary { grid-column: 1; }
+      .result-row.craft-summary { justify-items: start; }
     }
