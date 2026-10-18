@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="utf-8">
@@ -10,295 +10,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --paper-0: #fdf8ec;
-      --paper-50: #f8efd9;
-      --paper-100: #f1e3c4;
-      --paper-200: #e8d7ae;
-      --paper-300: #d8c393;
-      --ink-200: #8a7250;
-      --ink-300: #6b573c;
-      --ink-400: #4f3e2b;
-      --ink-500: #3a2c1e;
-      --ink-600: #2a1f14;
-      --gold-300: #cba75d;
-      --gold-500: #a8853f;
-      --gold-700: #7d612b;
-      --seal-500: #7b2a1c;
-      --primary-700: #5a4527;
-      --hand: 'Caveat', 'Comic Sans MS', cursive;
-      --serif: 'PT Serif', Georgia, 'Times New Roman', serif;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: var(--serif);
-      font-size: 17px;
-      line-height: 1.6;
-      color: var(--ink-500);
-      background-color: var(--paper-50);
-      background-image:
-        radial-gradient(ellipse at top, rgba(253, 248, 236, 0.7), transparent 60%),
-        radial-gradient(rgba(58, 44, 30, 0.04) 1px, transparent 1px);
-      background-size: 100% 100%, 4px 4px;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
-
-    /* ——— Шапка ——— */
-    .hero {
-      text-align: center;
-      padding: 42px 0 30px;
-      background: linear-gradient(180deg, rgba(241, 227, 196, 0.9), rgba(248, 239, 217, 0));
-      border-bottom: 1px solid var(--paper-300);
-    }
-
-    .hero .kicker {
-      font-family: var(--hand);
-      font-size: 1.4rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold-700);
-      margin: 0 0 6px;
-    }
-
-    .hero h1 {
-      font-family: var(--hand);
-      font-weight: 700;
-      font-size: clamp(2.4rem, 6vw, 3.6rem);
-      line-height: 1.05;
-      color: var(--ink-600);
-      margin: 0 0 10px;
-    }
-
-    .hero .lead { max-width: 560px; margin: 0 auto; font-size: 1.05rem; color: var(--ink-400); }
-
-    /* ——— Секции ——— */
-    section { padding: 38px 0; }
-
-    .sec-title {
-      font-family: var(--hand);
-      font-weight: 700;
-      font-size: clamp(1.9rem, 5vw, 2.5rem);
-      text-align: center;
-      color: var(--ink-600);
-      margin: 0 0 4px;
-    }
-
-    .sec-sub { text-align: center; color: var(--ink-300); font-style: italic; margin: 0 0 24px; }
-
-    .ornament {
-      text-align: center;
-      color: var(--gold-500);
-      font-size: 1.1rem;
-      letter-spacing: 0.6em;
-      margin: 0 0 24px;
-      user-select: none;
-    }
-
-    .calc-card {
-      background: var(--paper-0);
-      border: 1px solid var(--paper-300);
-      border-radius: 16px;
-      padding: 26px 24px;
-      box-shadow: 0 2px 6px rgba(58, 44, 30, 0.10);
-    }
-
-    .fields {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px 20px;
-    }
-
-    .field { min-width: 0; }
-
-    .field > label {
-      display: block;
-      font-size: 0.92rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--ink-300);
-      margin: 0 0 6px;
-    }
-
-    .field .hint { font-size: 0.85rem; color: var(--ink-200); font-style: italic; margin-top: 4px; }
-
-    input[type="text"], input[type="number"], select {
-      width: 100%;
-      font-family: var(--serif);
-      font-size: 1.05rem;
-      color: var(--ink-600);
-      background: var(--paper-50);
-      border: 1px solid var(--paper-300);
-      border-radius: 10px;
-      padding: 10px 14px;
-      outline: none;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    input[type="text"]:focus, input[type="number"]:focus, select:focus {
-      border-color: var(--gold-500);
-      box-shadow: 0 0 0 3px rgba(168, 133, 63, 0.18);
-    }
-
-    select { cursor: pointer; }
-    select:disabled { color: var(--ink-200); cursor: default; background: var(--paper-100); }
-
-    /* ——— Поиск монстра с подсказками ——— */
-    .combo { position: relative; }
-
-    .combo-list {
-      position: absolute;
-      z-index: 30;
-      left: 0;
-      right: 0;
-      top: calc(100% + 6px);
-      background: var(--paper-0);
-      border: 1px solid var(--paper-300);
-      border-radius: 12px;
-      box-shadow: 0 10px 26px rgba(58, 44, 30, 0.22);
-      max-height: 320px;
-      overflow-y: auto;
-      padding: 6px;
-      display: none;
-    }
-
-    .combo-list.open { display: block; }
-
-    .combo-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
-      padding: 9px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      color: var(--ink-500);
-    }
-
-    .combo-item .lvl { flex: none; font-size: 0.88rem; color: var(--ink-200); font-style: italic; }
-    .combo-item:hover, .combo-item.active { background: var(--paper-100); color: var(--ink-600); }
-    .combo-item.none-lvl .lvl { color: var(--seal-500); }
-
-    .combo-empty { padding: 10px 12px; color: var(--ink-200); font-style: italic; }
-    .combo-mark { color: var(--gold-700); font-weight: 700; }
-
-    /* ——— Степпер (−/+ по бокам) ——— */
-    .stepper { display: flex; align-items: stretch; gap: 8px; }
-
-    .stepper button {
-      flex: none;
-      width: 46px;
-      font-family: var(--hand);
-      font-size: 1.6rem;
-      font-weight: 700;
-      line-height: 1;
-      color: var(--primary-700);
-      background: var(--paper-100);
-      border: 1px solid var(--paper-300);
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.15s ease, transform 0.1s ease;
-    }
-
-    .stepper button:hover { background: var(--paper-200); }
-    .stepper button:active { transform: translateY(1px); }
-    .stepper button:disabled { opacity: 0.45; cursor: default; transform: none; }
-
-    .stepper input { text-align: center; -moz-appearance: textfield; appearance: textfield; }
-    .stepper input::-webkit-outer-spin-button,
-    .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-    /* ——— Кнопка «Очистить» ——— */
-    .card-actions { margin-top: 20px; display: flex; justify-content: flex-end; }
-
-    .btn-clear {
-      font-family: var(--serif);
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--seal-500);
-      background: transparent;
-      border: 1px dashed var(--seal-500);
-      border-radius: 10px;
-      padding: 9px 22px;
-      cursor: pointer;
-      transition: background 0.15s ease;
-    }
-
-    .btn-clear:hover { background: rgba(123, 42, 28, 0.08); }
-
-    /* ——— Результаты ——— */
-    .results { margin-top: 22px; display: grid; gap: 14px; }
-
-    .result-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: baseline;
-      gap: 6px 16px;
-      background: var(--paper-50);
-      border: 1px solid var(--paper-200);
-      border-radius: 12px;
-      padding: 12px 16px;
-    }
-
-    .result-row .r-label { font-size: 0.95rem; color: var(--ink-300); }
-    .result-row .r-value {
-      font-family: var(--hand);
-      font-weight: 700;
-      font-size: 1.7rem;
-      line-height: 1.1;
-      color: var(--primary-700);
-      white-space: nowrap;
-    }
-
-    .result-row .r-formula {
-      grid-column: 1 / -1;
-      font-size: 0.88rem;
-      color: var(--ink-200);
-      font-style: italic;
-    }
-
-    .result-row.total { background: var(--paper-100); border-color: var(--paper-300); }
-    .result-row.total .r-value { font-size: 2rem; color: var(--gold-700); }
-
-    .placeholder { color: var(--ink-200); font-style: italic; text-align: center; padding: 8px 0 2px; }
-
-    /* ——— Футер ——— */
-    footer {
-      text-align: center;
-      padding: 26px 20px 40px;
-      color: var(--ink-300);
-      font-size: 0.95rem;
-      border-top: 1px solid var(--paper-300);
-    }
-
-    footer .seal {
-      display: inline-block;
-      font-family: var(--hand);
-      font-size: 1.3rem;
-      color: var(--seal-500);
-      border: 2px solid var(--seal-500);
-      border-radius: 50%;
-      width: 66px;
-      height: 66px;
-      line-height: 62px;
-      transform: rotate(-8deg);
-      margin-bottom: 10px;
-      opacity: 0.85;
-      user-select: none;
-    }
-
-    @media (max-width: 640px) {
-      .fields { grid-template-columns: 1fr; }
-      .result-row { grid-template-columns: 1fr; }
-      .result-row .r-value { font-size: 1.5rem; }
-      .result-row.total .r-value { font-size: 1.7rem; }
-    }
-  </style>
+  <link rel="stylesheet" href="./calculator.css">
+  <script src="./monsters-data.js"></script>
+  <script src="./recipes-data.js"></script>
 </head>
 <body>
   <header class="hero">
@@ -381,6 +95,17 @@
               <span class="r-value" id="dmg-value">—</span>
               <span class="r-formula" id="dmg-formula"></span>
             </div>
+
+        <div class="result-row" id="row-loot">
+          <div class="r-label">Loot</div>
+          <div class="r-value" id="loot-value">&#8212;</div>
+          <div class="r-formula" id="loot-formula"></div>
+        </div>
+            <div class="result-row" id="row-loot" hidden>
+              <span class="r-label">Лут</span>
+              <span class="r-value" id="loot-value">—</span>
+              <span class="r-formula" id="loot-formula"></span>
+            </div>
           </div>
 
           <div class="card-actions">
@@ -442,6 +167,214 @@
       </div>
     </section>
 
+    <section id="craft">
+      <div class="wrap">
+        <h2 class="sec-title">Калькулятор крафта</h2>
+        <p class="sec-sub">Выберите рецепт и уровень — узнайте, сколько ингредиентов нужно.</p>
+        <div class="ornament" aria-hidden="true">✦ ✦ ✦</div>
+
+        <div class="calc-card">
+          <div class="fields">
+            <div class="field">
+              <label for="craft-profession">Профессия</label>
+              <select id="craft-profession">
+                <option value="">Все профессии</option>
+                <option value="alchemist">Зельевар</option>
+                <option value="enchanter">Заклинатель</option>
+                <option value="cook">Кулинар</option>
+                <option value="jeweler">Ювелир</option>
+              </select>
+              <p class="hint">Фильтр по профессии крафта</p>
+            </div>
+
+            <div class="field">
+              <label for="craft-recipe">Рецепт</label>
+              <select id="craft-recipe" disabled>
+                <option value="">— сначала выберите профессию —</option>
+              </select>
+              <p class="hint">Выберите рецепт крафта</p>
+            </div>
+
+            <div class="field">
+              <label for="craft-level">Уровень рецепта</label>
+              <select id="craft-level" disabled>
+                <option value="1">1</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
+                <option value="35">35</option>
+                <option value="40">40</option>
+                <option value="50">50</option>
+                <option value="55">55</option>
+                <option value="60">60</option>
+                <option value="65">65</option>
+                <option value="70">70</option>
+                <option value="75">75</option>
+                <option value="80">80</option>
+                <option value="85">85</option>
+                <option value="90">90</option>
+                <option value="95">95</option>
+                <option value="100">100</option>
+              </select>
+              <p class="hint">Уровень рецепта определяет количество ингредиентов</p>
+            </div>
+
+            <div class="field">
+              <label for="craft-qty">Количество предметов</label>
+              <div class="stepper">
+                <button type="button" id="craft-qty-minus" aria-label="Уменьшить количество">−</button>
+                <input type="number" id="craft-qty" inputmode="numeric" min="1" step="1" value="1" aria-label="Количество">
+                <button type="button" id="craft-qty-plus" aria-label="Увеличить количество">+</button>
+              </div>
+              <p class="hint">Сколько предметов крафтится</p>
+            </div>
+          </div>
+
+          <div class="results" id="craft-results">
+            <p class="placeholder" id="craft-placeholder">Выберите рецепт, чтобы увидеть расчёт.</p>
+
+            <table class="craft-table" id="craft-table" hidden>
+              <thead>
+                <tr>
+                  <th>Ингредиент</th>
+                  <th style="text-align:right">На 1 предмет</th>
+                  <th style="text-align:right">× Кол-во</th>
+                  <th style="text-align:right">Всего</th>
+                </tr>
+              </thead>
+              <tbody id="craft-tbody"></tbody>
+            </table>
+
+            <div class="result-row craft-summary" id="row-craft-total" hidden>
+              <span class="r-label">Всего ингредиентов</span>
+              <span class="r-value" id="craft-total-value">—</span>
+              <button type="button" class="copy-btn" id="craft-copy" aria-label="Скопировать список ингредиентов">📋 Копировать</button>
+            </div>
+            <div class="r-formula" id="craft-total-formula" style="margin-top:6px"></div>
+          </div>
+
+          <div class="card-actions">
+            <button type="button" class="btn-clear" id="craft-clear">Очистить</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+        </div>
+      </section>
+
+      <!-- Craft Calculator Section -->
+      <section id="craft">
+        <div class="wrap">
+          <h2 class="sec-title">Craft Calculator</h2>
+          <p class="sec-sub">Select a recipe - ingredient count is calculated</p>
+          <div class="ornament" aria-hidden="true">&#9733; &#9733; &#9733;</div>
+
+          <div class="calc-card">
+            <div class="fields">
+               <div class="field">
+                 <label for="recipe-select">Recipe</label>
+                 <select id="recipe-select">
+                   <option value="">-- Select a recipe --</option>
+                 </select>
+               </div>
+
+               <div class="field">
+                 <label for="recipe-qty">Quantity</label>
+                 <div class="stepper">
+                   <button type="button" id="recipe-qty-minus" aria-label="Decrease quantity">-</button>
+                   <input type="number" id="recipe-qty" inputmode="numeric" min="1" step="1" value="1" aria-label="Quantity">
+                   <button type="button" id="recipe-qty-plus" aria-label="Increase quantity">+</button>
+                 </div>
+               </div>
+            </div>
+
+            <div class="card-actions">
+              <button type="button" id="recipe-clear" class="btn-clear">Clear</button>
+            </div>
+
+            <div class="results">
+              <div class="result-row" id="recipe-results" hidden>
+                <div class="r-label">Result</div>
+                <div class="r-value" id="recipe-value"></div>
+                <div class="r-formula" id="recipe-formula"></div>
+              </div>
+
+              <div class="result-row" hidden>
+                <table class="craft-table" id="craft-table">
+                  <thead>
+                    <tr><th>Ingredient</th><th>Qty</th></tr>
+                  </thead>
+                  <tbody id="craft-tbody"></tbody>
+                </table>
+              </div>
+
+              <div class="result-row" hidden>
+                <button type="button" id="copy-btn" class="copy-btn">Copy ingredients</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+      </section>
+      <!-- Craft Calculator -->
+      <section id="craft">
+        <div class="wrap">
+          <h2 class="sec-title">Craft Calculator</h2>
+          <p class="sec-sub">Select a recipe - ingredient count is calculated</p>
+          <div class="ornament" aria-hidden="true">* * *</div>
+
+          <div class="calc-card">
+            <div class="fields">
+               <div class="field">
+                 <label for="recipe-select">Recipe</label>
+                 <select id="recipe-select">
+                   <option value="">-- Select a recipe --</option>
+                 </select>
+               </div>
+
+               <div class="field">
+                 <label for="recipe-qty">Quantity</label>
+                 <div class="stepper">
+                   <button type="button" id="recipe-qty-minus" aria-label="Decrease quantity">-</button>
+                   <input type="number" id="recipe-qty" inputmode="numeric" min="1" step="1" value="1" aria-label="Quantity">
+                   <button type="button" id="recipe-qty-plus" aria-label="Increase quantity">+</button>
+                 </div>
+               </div>
+            </div>
+
+            <div class="card-actions">
+              <button type="button" id="recipe-clear" class="btn-clear">Clear</button>
+            </div>
+
+            <div class="results">
+              <div class="result-row" id="recipe-results" hidden>
+                <div class="r-label">Result</div>
+                <div class="r-value" id="recipe-value"></div>
+                <div class="r-formula" id="recipe-formula"></div>
+              </div>
+
+              <div class="result-row" hidden>
+                <table class="craft-table" id="craft-table">
+                  <thead>
+                    <tr><th>Ingredient</th><th>Qty</th></tr>
+                  </thead>
+                  <tbody id="craft-tbody"></tbody>
+                </table>
+              </div>
+
+              <div class="result-row" hidden>
+                <button type="button" id="copy-btn" class="copy-btn">Copy ingredients</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
   </main>
 
   <footer>
@@ -454,84 +387,10 @@
   <script>
     'use strict';
 
-    /* ——— Данные: монстры пресета бестиария (74 карточки) ——— */
-    var MONSTERS = [
-      { n: "Агрессивный тронкс", min: 2, max: 4 },
-    { n: "Аксолотль мутант", min: 3, max: 5 },
-    { n: "Белый габис", min: 3, max: 5 },
-    { n: "Баба-Яга", min: 4, max: 6 },
-    { n: "Балахам", min: 1, max: 3 },
-    { n: "Бобробис", min: 3, max: 5 },
-    { n: "Врандуис", min: 4, max: 6 },
-    { n: "Вепрь сумрачный", min: 2, max: 4 },
-    { n: "Горгомедиец человекоподобный", min: 1, max: 3 },
-    { n: "Горгомедиец-высасыватель", min: 2, max: 4 },
-    { n: "Горгомедиец-пожиратель", min: 3, max: 5 },
-    { n: "Горгомедиец-иллюзионист", min: 4, max: 6 },
-    { n: "Горгомедиец-охотник", min: 5, max: 7 },
-    { n: "Горгомедиец-гончая", min: 6, max: 8 },
-    { n: "Горгомедиец-змей", min: 7, max: 9 },
-    { n: "Горгомедиец-вестник", min: 8, max: 10 },
-    { n: "Гарпия", min: 3, max: 5 },
-    { n: "Гарпия-королева", min: 7, max: 9 },
-    { n: "Древостения", min: 4, max: 6 },
-    { n: "Драконохвост", min: 1, max: 3 },
-    { n: "Дракарис лучник", min: 2, max: 4 },
-    { n: "Дикий волк", min: 3, max: 5 },
-    { n: "Еманджа", min: 2, max: 4 },
-    { n: "Ерим", min: 1, max: 3 },
-    { n: "Жрунец грибной Синий шляпник", min: 1, max: 3 },
-    { n: "Жрунец грибной Белый шляпник", min: 1, max: 3 },
-    { n: "Жрунец грибной Коричневый шляпник", min: 1, max: 3 },
-    { n: "Жрунец грибной Мухоморник", min: 2, max: 4 },
-    { n: "Жрунец грибной Серый серебристик", min: 2, max: 4 },
-    { n: "Жрунец грибной Обманщик", min: 3, max: 5 },
-    { n: "Залурница", min: 2, max: 4 },
-    { n: "Злобное древо", min: 1, max: 3 },
-    { n: "Инеевая дипловица земли", min: 1, max: 3 },
-    { n: "Инеевая дипловица воздуха", min: 1, max: 3 },
-    { n: "Инеевая дипловица энергии", min: 1, max: 3 },
-    { n: "Инеевая дипловица воды", min: 1, max: 3 },
-    { n: "Инеевая дипловица огня", min: 1, max: 3 },
-    { n: "Йермавник", min: 2, max: 4 },
-    { n: "Йормунд", min: 1, max: 3 },
-    { n: "Квалистрина", min: 1, max: 3 },
-    { n: "Кумо-воин", min: 1, max: 3 },
-    { n: "Кумо-защитник", min: 2, max: 4 },
-    { n: "Кумо-шаман", min: 3, max: 5 },
-    { n: "Кугу-Куду", min: 4, max: 6 },
-    { n: "Лавовый носорог", min: 2, max: 4 },
-    { n: "Ламия", min: 1, max: 3 },
-    { n: "Мутировавший пчелиный солдат", min: 2, max: 4 },
-    { n: "Мертвый солдат Страж древа", min: 1, max: 3 },
-    { n: "Мертвый дух древа", min: 2, max: 4 },
-    { n: "Мертвый шаман древа" },
-    { n: "Мертвый медиум древа" },
-    { n: "Мглистый рыбовник", min: 1, max: 3 },
-    { n: "Мутировавшая медуза", min: 2, max: 4 },
-    { n: "Ночной вергермин", min: 2, max: 4 },
-    { n: "Неберус морской", min: 3, max: 5 },
-    { n: "Пиявочник", min: 1, max: 3 },
-    { n: "Повелитель глубин", min: 10, max: 10 },
-    { n: "Проклятье леса", min: 4, max: 6 },
-    { n: "Плотоядная тюльпаница", min: 3, max: 5 },
-    { n: "Рудильщик", min: 1, max: 3 },
-    { n: "Ранзморфус", min: 3, max: 5 },
-    { n: "Сияющий алушник", min: 2, max: 4 },
-    { n: "Скорпивидный уронос", min: 1, max: 3 },
-    { n: "Темнистый глубинарх", min: 3, max: 6 },
-    { n: "Темнистный светящийся глубинарх", min: 3, max: 6 },
-    { n: "Туманник-воин", min: 1, max: 3 },
-    { n: "Туманник-заклинательница", min: 2, max: 4 },
-    { n: "Туманник-шаман", min: 5, max: 7 },
-    { n: "Турль", min: 1, max: 3 },
-    { n: "Фиврос", min: 1, max: 3 },
-    { n: "Хищный грифус", min: 1, max: 3 },
-    { n: "Ханоёсэ", min: 1, max: 3 },
-    { n: "Шаровидный обструктор", min: 2, max: 4 },
-    { n: "Ядовитая аркхазия", min: 1, max: 3 },
-    ];
-
+  </script>
+  <script src="./monsters-data.js"></script>
+  <script src="./recipes-data.js"></script>
+  <script>
     /* ——— Утилиты ——— */
     function fmtInt(x) {
       var s = Math.round(x).toString(10);
@@ -570,6 +429,9 @@
     var expFormula = document.getElementById('exp-formula');
     var dmgValue = document.getElementById('dmg-value');
     var dmgFormula = document.getElementById('dmg-formula');
+    var rowLoot = document.getElementById('row-loot');
+    var lootValue = document.getElementById('loot-value');
+    var lootFormula = document.getElementById('loot-formula');
     var mClear = document.getElementById('monster-clear');
 
     var current = null;   // выбранный монстр {n, min, max}
@@ -699,9 +561,34 @@
       expFormula.textContent = current.n + ', ' + level + ' ур., опыт ' + Math.round(expPct * 100) + '%' +
         (qty > 1 ? ', ' + qty + ' шт.' : '') + ' → ' + fmtInt(expOne) + ' за одного, всего ' + fmtInt(expAll);
 
-      dmgValue.textContent = fmtInt(dmgOne) + (qty > 1 ? ' × ' + qty + ' = ' + fmtInt(dmgAll) : '');
-      dmgFormula.textContent = current.n + ', ' + level + ' ур., урон ' + dmgPct + '%' +
-        (qty > 1 ? ', ' + qty + ' шт.' : '') + ' → ' + fmtInt(dmgOne) + ' за одного, всего ' + fmtInt(dmgAll);
+      dmgValue.textContent = fmtInt(dmgOne);
+      dmgFormula.textContent = current.n + ', lvl ' + level + ', ' + dmgPct + '% damage' +
+        (qty > 1 ? ', ' + qty + ' pcs' : '') + ' -> ' + fmtInt(dmgOne) + ' per one, ' + fmtInt(dmgAll) + ' total';
+
+      /* Лут */
+      var loot = current.loot || [];
+      rowLoot.hidden = loot.length === 0;
+      if (loot.length === 0) {
+        lootValue.textContent = '-';
+        lootFormula.textContent = 'No loot drops';
+      } else {
+        var lines = [];
+        for (var j = 0; j < loot.length; j++) {
+          var item = loot[j];
+          var name = item[0];
+          var chance = item[1];
+          var expected = qty * (chance / 100);
+          if (chance === 100) {
+            lines.push(name + ': ' + qty + ' pcs');
+          } else if (expected >= 1) {
+            lines.push(name + ': ' + chance + '% (expected ' + Math.round(expected) + ' pcs)');
+          } else {
+            lines.push(name + ': ' + chance + '% (expected ' + expected.toFixed(2) + ' pcs)');
+          }
+        }
+        lootValue.textContent = lines.join(', ');
+        lootFormula.textContent = 'From killing ' + qty + ' monsters';
+      }
     }
     /* ——— События калькулятора 1 ——— */
     mInput.addEventListener('input', renderList);
@@ -837,8 +724,9 @@
     buildLevelOptions();
     recalc1();
     recalc2();
-
   </script>
+
+  <script src="./craft-calculator.js"></script>
 </body>
 </html>
 
