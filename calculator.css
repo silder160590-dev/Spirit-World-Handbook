@@ -99,6 +99,7 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 18px 20px;
+      margin-bottom: 22px;
     }
 
     .field { min-width: 0; }
@@ -287,17 +288,25 @@
     }
 
     /* ——— Лут и крафт: единый стиль для result-row ——— */
+    /* Убираем grid-column约束 — .r-label и .r-value текут свободно,
+       .r-value занимает всё доступное место, кнопка не уезжает вниз */
     #row-loot,
     #row-craft {
-      grid-template-columns: minmax(0, 70%) minmax(0, 1fr);
       align-items: start;
     }
     #row-loot .r-label,
     #row-craft .r-label {
-      grid-column: 1 / -1;
-      justify-self: start;
+      display: block;
+      margin-bottom: 6px;
       font-weight: 500;
       color: var(--ink-400);
+    }
+    #row-loot .r-value,
+    #row-craft .r-value {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      width: 100%;
     }
 
     .copy-btn {
@@ -354,7 +363,7 @@
 
       #row-loot,
       #row-craft {
-        grid-template-columns: 1fr;
+        /* сетка больше не нужна, flex в .r-value справляется */
       }
       #row-loot .r-label,
       #row-craft .r-label {
