@@ -169,6 +169,7 @@
     }
 
     .combo-item .lvl { flex: none; font-size: 0.88rem; color: var(--ink-200); font-style: italic; }
+    .combo-item .combo-el { flex: none; margin-left: auto; }
     .combo-item:hover, .combo-item.active { background: var(--paper-100); color: var(--ink-600); }
     .combo-item.none-lvl .lvl { color: var(--seal-500); }
 
@@ -330,6 +331,41 @@
       color: var(--gold-700);
       border-color: var(--gold-500);
     }
+
+    /* ——— Чипы стихий (как в приложении: ElementBackdrop/ELEMENT_STYLES) ——— */
+    .element-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .element-chip {
+      font-family: var(--serif);
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(58, 44, 30, 0.25);
+      white-space: nowrap;
+    }
+
+    /* Цветные полосы по стихиям — сегменты на всю высоту чипа */
+    .element-chip-stripes {
+      display: inline-flex;
+      padding: 0;
+      overflow: hidden;
+    }
+    .element-chip-stripes .element-chip {
+      border-radius: 0;
+      border: none;
+      border-right: 1px solid rgba(58, 44, 30, 0.25);
+    }
+    .element-chip-stripes .element-chip:last-child { border-right: none; }
+    .element-chip-stripes .element-chip:first-child { border-top-left-radius: 999px; border-bottom-left-radius: 999px; }
+    .element-chip-stripes .element-chip:last-child { border-top-right-radius: 999px; border-bottom-right-radius: 999px; }
+
+    /* Чипы в подсказках комбобокса — компактнее */
+    .combo-item .element-chip { font-size: 0.78rem; padding: 3px 10px; font-weight: 400; }
+
+    /* Чипы в строке результата: r-value не даёт переноситься (nowrap) — переопределяем */
+    #row-element .r-value { white-space: normal; }
 
     footer {
       text-align: center;

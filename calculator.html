@@ -79,6 +79,10 @@
           </div>
 
           <div class="results" id="monster-results">
+            <div class="result-row" id="row-element" hidden>
+              <span class="r-label">Стихия</span>
+              <span class="r-value" id="element-value"></span>
+            </div>
             <div class="result-row" id="row-exp" hidden>
               <span class="r-label">Опыт</span>
               <span class="r-value" id="exp-value">—</span>
@@ -274,6 +278,8 @@
     var lootValue = document.getElementById('loot-value');
     var lootCopy = document.getElementById('loot-copy');
     var mClear = document.getElementById('monster-clear');
+    var rowElement = document.getElementById('row-element');
+    var elementValue = document.getElementById('element-value');
 
     var current = null;   // выбранный монстр {n, min, max, loot}
     var activeIdx = -1;   // подсвеченный пункт списка подсказок
@@ -313,6 +319,34 @@
       });
     }
 
+    /* ——— Стихии: палитра как в приложении (constants/monsterElements.ts) ——— */
+    var ELEMENT_STYLES = {
+      'Вода': { background: '#d5e4ec', text: '#26485c' },
+      'Огонь': { background: '#ecd2c8', text: '#6d3223' },
+      'Земля': { background: '#cbb98f', text: '#5b4726' },
+      'Воздух': { background: '#dde8d6', text: '#42582f' },
+      'Энергия': { background: '#e0d5ea', text: '#4c3663' },
+      'Свет': { background: '#ece5c8', text: '#5e5322' },
+      'Тьма': { background: '#d3ccd6', text: '#372e42' }
+    };
+    var DEFAULT_ELEMENT_STYLE = { background: '#efe9d8', text: '#4f3e2b' };
+
+    function elementChip(el) {
+      var st = ELEMENT_STYLES[el] || DEFAULT_ELEMENT_STYLE;
+      return '<span class="element-chip" style="background:' + st.background + ';color:' + st.text + '">' +
+        escapeHtml(el) + '</span>';
+    }
+
+    function elementChipsHtml(els) {
+      if (!els || els.length === 0) {
+        var st = DEFAULT_ELEMENT_STYLE;
+        return '<span class="element-chip" style="background:' + st.background + ';color:' + st.text + '">— без стихии —</span>';
+      }
+      if (els.length === 1) return elementChip(els[0]);
+      /* Несколько стихий — цветные полосы-сегменты, как ElementBackdrop в приложении */
+      return '<span class="element-chip-stripes">' + els.map(elementChip).join('') + '</span>';
+    }
+
     function markMatch(name, q) {
       var t = norm(q.trim());
       if (!t) return escapeHtml(name);
@@ -338,7 +372,8 @@
         var m = MONSTERS[hits[k]];
         html += '<div class="combo-item' + (m.min == null ? ' none-lvl' : '') + '" data-i="' + hits[k] + '" role="option">' +
           '<span>' + markMatch(m.n, q) + '</span>' +
-          '<span class="lvl">' + lvlLabel(m) + '</span></div>';
+          '<span class="lvl">' + lvlLabel(m) + '</span>' +
+          '<span class="combo-el">' + elementChipsHtml(m.el) + '</span></div>';
       }
       mList.innerHTML = html;
       mList.classList.add('open');
@@ -379,6 +414,7 @@
 
     function recalc1() {
       if (current == null) {
+        rowElement.hidden = true;
         rowExp.hidden = true;
         rowDmg.hidden = true;
         rowLoot.hidden = true;
@@ -396,6 +432,8 @@
 
       rowExp.hidden = false;
       rowDmg.hidden = false;
+      rowElement.hidden = false;
+      elementValue.innerHTML = elementChipsHtml(current.el);
 
       expValue.textContent = fmtInt(expOne) + (qty > 1 ? ' × ' + qty + ' = ' + fmtInt(expAll) : '');
       expFormula.textContent = current.n + ', ' + level + ' ур., опыт ' + Math.round(expPct * 100) + '%' +
