@@ -443,7 +443,7 @@
       dmgFormula.textContent = current.n + ', ' + level + ' ур., урон ' + dmgPct + '%' +
         (qty > 1 ? ', ' + qty + ' шт.' : '') + ' → ' + fmtInt(dmgOne) + ' за одного, всего ' + fmtInt(dmgAll);
 
-      /* Лут: ожидаемое количество = кол-во монстров × шанс/100 */
+      /* Лут: «имя N / M» — N = кол-во монстров (стаков), M = размер стака из бестиария */
       var loot = current.loot || [];
       rowLoot.hidden = loot.length === 0;
       if (loot.length === 0) {
@@ -453,7 +453,7 @@
       var lines = [];
       for (var j = 0; j < loot.length; j++) {
         var name = loot[j][0];
-        lines.push(name + ' ' + qty);
+        lines.push(name + ' ' + qty + ' / ' + loot[j][1]);
       }
       lootValue.querySelector('.r-value-text').textContent = lines.join('\n');
     }
