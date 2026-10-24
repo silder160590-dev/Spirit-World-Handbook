@@ -257,18 +257,21 @@
 
     .placeholder { color: var(--ink-200); font-style: italic; text-align: center; padding: 8px 0 2px; }
 
-    #row-loot {
+    #row-loot,
+    #city-row {
       grid-template-columns: minmax(0, 70%) minmax(0, 1fr);
       align-items: start;
       justify-items: stretch;
     }
-    #row-loot .r-label {
+    #row-loot .r-label,
+    #city-row .r-label {
       grid-column: 1 / -1;
       justify-self: start;
       font-weight: 500;
       color: var(--ink-400);
     }
-    #row-loot .r-value {
+    #row-loot .r-value,
+    #city-row .r-value {
       display: flex;
       align-items: flex-start;
       gap: 12px;
