@@ -101,9 +101,11 @@
                 </span>
                 <button type="button" class="copy-btn loot-copy-btn" id="loot-copy" aria-label="Скопировать список лута">Копировать</button>
               </div>
-              <div class="city-col" id="city-col">
-                <p class="city-col-title">Города</p>
-                <div class="city-list" id="city-list"></div>
+              <div class="result-row" id="city-row" hidden>
+                <span class="r-label">Города</span>
+                <span class="r-value" id="city-value">
+                  <span class="r-value-text" id="city-list"></span>
+                </span>
               </div>
             </div>
           </div>
@@ -618,7 +620,7 @@
 
     /* ——— Обновление списка городов монстра ——— */
     var cityListEl = document.getElementById('city-list');
-    var cityColEl = document.getElementById('city-col');
+    var cityRowEl = document.getElementById('city-row');
     var lootCityGrid = document.getElementById('loot-city-grid');
 
     function getCityNames() {
@@ -637,10 +639,10 @@
 
     /* Лут и города — 50/50; если есть только одно — колонка одна, если ни одного — блок скрыт */
     function syncLootCity() {
-      if (!cityColEl || !lootCityGrid) return;
+      if (!cityRowEl || !lootCityGrid) return;
       var hasLoot = !rowLoot.hidden;
       var hasCities = getCityNames().length > 0;
-      cityColEl.hidden = !hasCities;
+      cityRowEl.hidden = !hasCities;
       lootCityGrid.hidden = !(hasLoot || hasCities);
       lootCityGrid.classList.toggle('single', hasLoot !== hasCities);
     }

@@ -293,23 +293,27 @@
     /* Убираем grid-column约束 — .r-label и .r-value текут свободно,
        .r-value занимает всё доступное место, кнопка не уезжает вниз */
     #row-loot,
-    #row-craft {
+    #row-craft,
+    #city-row {
       align-items: start;
     }
     #row-loot .r-label,
-    #row-craft .r-label {
+    #row-craft .r-label,
+    #city-row .r-label {
       display: block;
       margin-bottom: 6px;
       font-weight: 500;
       color: var(--ink-400);
     }
     #row-loot .r-value,
-    #row-craft .r-value {
+    #row-craft .r-value,
+    #city-row .r-value {
       display: flex;
       align-items: flex-start;
       gap: 12px;
       width: 100%;
     }
+    #city-row .r-value { max-height: 400px; overflow-y: auto; }
 
     .copy-btn {
       font-family: var(--serif);
@@ -401,25 +405,6 @@
     }
     .results-grid[hidden] { display: none; }
     .results-grid.single { grid-template-columns: 1fr; }
-    .city-col {
-      background: var(--paper-50);
-      border: 1px solid var(--paper-200);
-      border-radius: 12px;
-      padding: 12px 16px;
-    }
-    .city-col-title {
-      margin: 0 0 6px;
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: var(--ink-400);
-    }
-    .city-list {
-      font-size: 0.95rem;
-      color: var(--ink-600);
-      line-height: 1.6;
-      max-height: 400px;
-      overflow-y: auto;
-    }
 
     @media (max-width: 640px) {
       .results-grid { grid-template-columns: 1fr; }
