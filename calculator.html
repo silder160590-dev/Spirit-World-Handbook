@@ -78,7 +78,7 @@
             </div>
           </div>
 
-          <div class="results" id="monster-results" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+          <div class="results results-grid" id="monster-results">
   <div class="result-cols">
             <div class="result-row" id="row-element" hidden>
               <span class="r-label">Стихия</span>
@@ -96,7 +96,10 @@
             </div>
             <div class="result-row" id="row-loot" hidden>
               <span class="r-label">Лут</span>
-              <span class="r-value" id="loot-value"><span class="r-value-text"></span><button type="button" class="copy-btn loot-copy-btn" id="loot-copy" aria-label="Скопировать список лута">Копировать</button></span>
+              <span class="r-value" id="loot-value">
+                <span class="r-value-text"></span>
+              </span>
+              <button type="button" class="copy-btn loot-copy-btn" id="loot-copy" aria-label="Скопировать список лута">Копировать</button>
             </div>
           </div>
           <div class="city-col">
@@ -222,7 +225,9 @@
 
           
           <div class="result-row" id="row-craft" hidden>
-            <span class="r-value" id="craft-output"><span class="r-value-text"></span><button type="button" class="copy-btn" id="craft-copy" aria-label="Скопировать список ингредиентов">Копировать</button></span>
+            <span class="r-value" id="craft-output">
+              <span class="r-value-text"></span>
+              <button type="button" class="copy-btn" id="craft-copy" aria-label="Скопировать список ингредиентов">Копировать</button></span>
           </div>
 
           <div class="card-actions">
@@ -397,6 +402,7 @@
       cntInput.value = '1';
       buildLevelOptions();
       recalc1();
+      updateCityList();
     }
 
     function buildLevelOptions() {
@@ -479,7 +485,7 @@
     });
 
     /* ——— События калькулятора 1 ——— */
-    mInput.addEventListener('input', renderList);
+    mInput.addEventListener('input', function () { renderList(); updateCityList(); });
     mInput.addEventListener('focus', renderList);
 
     mInput.addEventListener('keydown', function (e) {
@@ -539,6 +545,7 @@
       expSel.value = '1';
       dmgSel.value = '10';
       recalc1();
+      updateCityList();
       mInput.focus();
     });
 
@@ -607,28 +614,26 @@
       l2Input.focus();
     });
 
+    /* ——— Обновление списка городов монстра ——— */
+    function updateCityList() {
+      var cityList = document.getElementById('city-list');
+      if (!cityList) return;
+      var mName = mInput.value.trim();
+      var m = MONSTERS.find(function (x) { return x.n === mName; });
+      var names = m ? (m.cityNames || m.cities || m.cityIds || []) : [];
+      cityList.innerHTML = '';
+      if (!names.length) return;
+      names.forEach(function (name) {
+        var li = document.createElement('li');
+        li.textContent = name;
+        cityList.appendChild(li);
+      });
+    }
+
     /* ——— Инициализация ——— */
     buildLevelOptions();
     recalc1(); updateCityList();
     recalc2();
-function updateCityList() {
-  var cityList = document.getElementById('city-list');
-  if (!cityList) return;
-  var mName = mInput.value.trim();
-  var m = MONSTERS.find(function (x) { return x.n === mName; });
-  if (!m || !m.cityIds) {
-    cityList.innerHTML = '';
-    return;
-  }
-  var names = (m.cityIds || []).map(function (cid) { return /* city name from monsters-data.js */ cid; }).filter(Boolean);
-  cityList.innerHTML = '';
-  if (names.length === 0) return;
-  names.forEach(function (name) {
-    var li = document.createElement('li');
-    li.textContent = name;
-    cityList.appendChild(li);
-  });
-}
   </script>
 
   <script src="./craft-calculator.js"></script>

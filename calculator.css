@@ -416,21 +416,6 @@
 
     @media (max-width: 640px) {
       .results-grid { grid-template-columns: 1fr; }
-      .result-row { grid-template-columns: 1fr; }
-      .result-row .r-value { font-size: 1.5rem; }
-      .result-row.total .r-value { font-size: 1.7rem; }
-
-      #row-loot,
-      #row-craft {
-      }
-      #row-loot .r-label,
-      #row-craft .r-label {
-        grid-column: 1;
-      }
-      .r-value-text {
-        font-size: 1.5rem;
-      }
-    }
       .fields { grid-template-columns: 1fr; }
       .result-row { grid-template-columns: 1fr; }
       .result-row .r-value { font-size: 1.5rem; }
