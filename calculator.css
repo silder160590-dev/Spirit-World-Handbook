@@ -410,10 +410,8 @@
     .city-col-title {
       margin: 0 0 6px;
       font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--ink-300);
+      font-weight: 500;
+      color: var(--ink-400);
     }
     .city-list {
       font-size: 0.95rem;
