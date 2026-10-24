@@ -391,7 +391,46 @@
       user-select: none;
     }
 
+    /* ——— 50/50 split результатов ——— */
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .result-cols { }
+    .city-col { }
+    .city-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .city-list li {
+      padding: 6px 0;
+      font-size: 0.95rem;
+      color: var(--ink-600);
+      border-bottom: 1px solid var(--paper-200);
+    }
+    .city-list li:last-child { border-bottom: none; }
+
     @media (max-width: 640px) {
+      .results-grid { grid-template-columns: 1fr; }
+      .result-row { grid-template-columns: 1fr; }
+      .result-row .r-value { font-size: 1.5rem; }
+      .result-row.total .r-value { font-size: 1.7rem; }
+
+      #row-loot,
+      #row-craft {
+      }
+      #row-loot .r-label,
+      #row-craft .r-label {
+        grid-column: 1;
+      }
+      .r-value-text {
+        font-size: 1.5rem;
+      }
+    }
       .fields { grid-template-columns: 1fr; }
       .result-row { grid-template-columns: 1fr; }
       .result-row .r-value { font-size: 1.5rem; }

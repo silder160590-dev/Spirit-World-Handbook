@@ -78,7 +78,8 @@
             </div>
           </div>
 
-          <div class="results" id="monster-results">
+          <div class="results" id="monster-results" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+  <div class="result-cols">
             <div class="result-row" id="row-element" hidden>
               <span class="r-label">Стихия</span>
               <span class="r-value" id="element-value"></span>
@@ -98,6 +99,10 @@
               <span class="r-value" id="loot-value"><span class="r-value-text"></span><button type="button" class="copy-btn loot-copy-btn" id="loot-copy" aria-label="Скопировать список лута">Копировать</button></span>
             </div>
           </div>
+          <div class="city-col">
+            <ul class="city-list" id="city-list"></ul>
+          </div>
+        </div>
 
           <div class="card-actions">
             <button type="button" class="btn-clear" id="monster-clear">Очистить</button>
@@ -518,7 +523,7 @@
     cntInput.addEventListener('input', recalc1);
 
     function setCount(v) {
-      cntInput.value = String(clampInt(v, 1, 999, 1));
+      cntInput.value = String(clampInt(v, 1, 999, 1)); updateCityList();
       recalc1();
     }
 
@@ -604,8 +609,26 @@
 
     /* ——— Инициализация ——— */
     buildLevelOptions();
-    recalc1();
+    recalc1(); updateCityList();
     recalc2();
+function updateCityList() {
+  var cityList = document.getElementById('city-list');
+  if (!cityList) return;
+  var mName = mInput.value.trim();
+  var m = MONSTERS.find(function (x) { return x.n === mName; });
+  if (!m || !m.cityIds) {
+    cityList.innerHTML = '';
+    return;
+  }
+  var names = (m.cityIds || []).map(function (cid) { return /* city name from monsters-data.js */ cid; }).filter(Boolean);
+  cityList.innerHTML = '';
+  if (names.length === 0) return;
+  names.forEach(function (name) {
+    var li = document.createElement('li');
+    li.textContent = name;
+    cityList.appendChild(li);
+  });
+}
   </script>
 
   <script src="./craft-calculator.js"></script>
