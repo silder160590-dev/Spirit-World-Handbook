@@ -402,19 +402,12 @@
     .results-grid[hidden] { display: none; }
     .results-grid.single { grid-template-columns: 1fr; }
     .city-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+      font-size: 0.95rem;
+      color: var(--ink-600);
+      line-height: 1.6;
       max-height: 400px;
       overflow-y: auto;
     }
-    .city-list li {
-      padding: 6px 0;
-      font-size: 0.95rem;
-      color: var(--ink-600);
-      border-bottom: 1px solid var(--paper-200);
-    }
-    .city-list li:last-child { border-bottom: none; }
 
     @media (max-width: 640px) {
       .results-grid { grid-template-columns: 1fr; }
