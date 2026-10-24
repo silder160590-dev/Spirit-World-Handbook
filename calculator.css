@@ -19,6 +19,7 @@
     }
 
     * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
 
     body {
       margin: 0;
@@ -391,14 +392,15 @@
       user-select: none;
     }
 
-    /* ——— 50/50 split результатов ——— */
+    /* ——— 50/50 split: лут | города ——— */
     .results-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1.5rem;
+      align-items: start;
     }
-    .result-cols { }
-    .city-col { }
+    .results-grid[hidden] { display: none; }
+    .results-grid.single { grid-template-columns: 1fr; }
     .city-list {
       list-style: none;
       padding: 0;

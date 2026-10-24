@@ -78,8 +78,7 @@
             </div>
           </div>
 
-          <div class="results results-grid" id="monster-results">
-  <div class="result-cols">
+          <div class="results" id="monster-results">
             <div class="result-row" id="row-element" hidden>
               <span class="r-label">Стихия</span>
               <span class="r-value" id="element-value"></span>
@@ -94,18 +93,19 @@
               <span class="r-value" id="dmg-value">—</span>
               <span class="r-formula" id="dmg-formula"></span>
             </div>
-            <div class="result-row" id="row-loot" hidden>
-              <span class="r-label">Лут</span>
-              <span class="r-value" id="loot-value">
-                <span class="r-value-text"></span>
-              </span>
-              <button type="button" class="copy-btn loot-copy-btn" id="loot-copy" aria-label="Скопировать список лута">Копировать</button>
+            <div class="results-grid" id="loot-city-grid">
+              <div class="result-row" id="row-loot" hidden>
+                <span class="r-label">Лут</span>
+                <span class="r-value" id="loot-value">
+                  <span class="r-value-text"></span>
+                </span>
+                <button type="button" class="copy-btn loot-copy-btn" id="loot-copy" aria-label="Скопировать список лута">Копировать</button>
+              </div>
+              <div class="city-col" id="city-col">
+                <ul class="city-list" id="city-list"></ul>
+              </div>
             </div>
           </div>
-          <div class="city-col">
-            <ul class="city-list" id="city-list"></ul>
-          </div>
-        </div>
 
           <div class="card-actions">
             <button type="button" class="btn-clear" id="monster-clear">Очистить</button>
@@ -457,6 +457,7 @@
       /* Лут: «имя N / M» — N = кол-во монстров (стаков), M = размер стака из бестиария */
       var loot = current.loot || [];
       rowLoot.hidden = loot.length === 0;
+      syncLootCity();
       if (loot.length === 0) {
         lootValue.querySelector('.r-value-text').textContent = '—';
         return;
@@ -615,19 +616,37 @@
     });
 
     /* ——— Обновление списка городов монстра ——— */
-    function updateCityList() {
-      var cityList = document.getElementById('city-list');
-      if (!cityList) return;
+    var cityListEl = document.getElementById('city-list');
+    var cityColEl = document.getElementById('city-col');
+    var lootCityGrid = document.getElementById('loot-city-grid');
+
+    function getCityNames() {
       var mName = mInput.value.trim();
       var m = MONSTERS.find(function (x) { return x.n === mName; });
-      var names = m ? (m.cityNames || m.cities || m.cityIds || []) : [];
-      cityList.innerHTML = '';
-      if (!names.length) return;
+      if (!m) return [];
+      return m.cityNames || m.cities || m.cityIds || [];
+    }
+
+    function updateCityList() {
+      if (!cityListEl) return;
+      var names = getCityNames();
+      cityListEl.innerHTML = '';
       names.forEach(function (name) {
         var li = document.createElement('li');
         li.textContent = name;
-        cityList.appendChild(li);
+        cityListEl.appendChild(li);
       });
+      syncLootCity();
+    }
+
+    /* Лут и города — 50/50; если есть только одно — колонка одна, если ни одного — блок скрыт */
+    function syncLootCity() {
+      if (!cityColEl || !lootCityGrid) return;
+      var hasLoot = !rowLoot.hidden;
+      var hasCities = getCityNames().length > 0;
+      cityColEl.hidden = !hasCities;
+      lootCityGrid.hidden = !(hasLoot || hasCities);
+      lootCityGrid.classList.toggle('single', hasLoot !== hasCities);
     }
 
     /* ——— Инициализация ——— */
