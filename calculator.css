@@ -116,6 +116,47 @@
 
     .field .hint { font-size: 0.85rem; color: var(--ink-200); font-style: italic; margin-top: 4px; }
 
+    .field-label {
+      display: block;
+      font-size: 0.92rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink-300);
+      margin: 0 0 6px;
+    }
+
+    /* ——— Переключатель Продажа / Покупка ——— */
+    .switch {
+      display: flex;
+      background: var(--paper-100);
+      border: 1px solid var(--paper-300);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .switch-btn {
+      flex: 1 1 0;
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--ink-300);
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .switch-btn:hover { color: var(--ink-500); }
+
+    .switch-btn.active {
+      background: var(--paper-0);
+      color: var(--gold-700);
+      box-shadow: 0 1px 3px rgba(58, 44, 30, 0.18);
+    }
+
     input[type="text"], input[type="number"], select {
       width: 100%;
       font-family: var(--serif);
@@ -176,6 +217,50 @@
 
     .combo-empty { padding: 10px 12px; color: var(--ink-200); font-style: italic; }
     .combo-mark { color: var(--gold-700); font-weight: 700; }
+    .combo-item .price { flex: none; font-size: 0.9rem; color: var(--gold-700); white-space: nowrap; }
+
+    /* ——— Покупка/продажа: список позиций ——— */
+    .items { display: grid; gap: 10px; }
+    .items:empty { display: none; }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--paper-50);
+      border: 1px solid var(--paper-200);
+      border-radius: 12px;
+      padding: 10px 14px;
+    }
+
+    .item-row .item-name { flex: 1 1 auto; min-width: 0; color: var(--ink-500); }
+    .item-row .item-amount {
+      flex: none;
+      font-family: var(--hand);
+      font-weight: 700;
+      font-size: 1.4rem;
+      line-height: 1;
+      color: var(--primary-700);
+      white-space: nowrap;
+    }
+
+    .item-row .stepper { flex: none; gap: 6px; }
+    .item-row .stepper button { width: 38px; font-size: 1.35rem; }
+    .item-row .stepper input {
+      width: 56px;
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      color: var(--ink-600);
+      background: var(--paper-0);
+      border: 1px solid var(--paper-300);
+      border-radius: 10px;
+      padding: 7px 4px;
+    }
+
+    @media (max-width: 640px) {
+      .item-row { flex-wrap: wrap; }
+      .item-row .item-amount { order: 3; width: 100%; text-align: right; }
+    }
 
     /* ——— Степпер (−/+ по бокам) ——— */
     .stepper { display: flex; align-items: stretch; gap: 8px; }

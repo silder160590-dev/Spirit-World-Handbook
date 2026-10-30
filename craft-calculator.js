@@ -206,78 +206,210 @@
   /* ——— Покупка/Продажа калькулятор ——— */
   var buySellInput = document.getElementById('item-input');
   var buySellList = document.getElementById('item-list');
-  var modeSelect = document.getElementById('mode-select');
+  var modeSwitch = document.getElementById('mode-switch');
+  var modeButtons = modeSwitch ? modeSwitch.querySelectorAll('.switch-btn') : [];
   var itemsList = document.getElementById('items-list');
   var totalValue = document.getElementById('total-value');
   var ITEMS = window.ITEMS || [];
 
-  function findItem(name) {
-    return ITEMS.find(function (x) { return x.n === name; });
+  var MAX_LIST_ITEMS = 12;   // длина подсказок, как в комбобоксе монстров
+  var pickedIdx = -1;        // подсвеченный пункт подсказок
+  var itemRows = {};         // имя предмета -> количество (порядок задаёт DOM)
+  var mode = 'buy';          // текущий режим: 'buy' (покупка) или 'sell' (продажа)
+
+  /* Цена предмета в текущем режиме; '-' означает, что операция недоступна */
+  function priceFor(item, mode) {
+    var raw = mode === 'buy' ? item.buy : item.sell;
+    return typeof raw === 'number' ? raw : null;
   }
 
-  function addItemToList(name, qty) {
-    var item = findItem(name);
+  function currentMode() {
+    return mode;
+  }
+
+  /* Переключатель покупка/продажа: активная кнопка и пересчёт цен */
+  function setMode(next) {
+    mode = next === 'sell' ? 'sell' : 'buy';
+    for (var i = 0; i < modeButtons.length; i++) {
+      var isActive = modeButtons[i].getAttribute('data-mode') === mode;
+      modeButtons[i].classList.toggle('active', isActive);
+      modeButtons[i].setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    }
+    renderRows();
+    if (buySellList.classList.contains('open')) renderItemList();
+  }
+
+  for (var mb = 0; mb < modeButtons.length; mb++) {
+    (function (btn) {
+      btn.addEventListener('click', function () { setMode(btn.getAttribute('data-mode')); });
+    })(modeButtons[mb]);
+  }
+
+  /* Поиск по названию: сначала «начинается с», затем «содержит» */
+  function searchItems(q) {
+    var nq = norm(q.trim());
+    if (!nq) return [];
+    var starts = [], incl = [];
+    for (var i = 0; i < ITEMS.length; i++) {
+      var nn = norm(ITEMS[i].n);
+      if (nn.indexOf(nq) === 0) starts.push(i);
+      else if (nn.indexOf(nq) !== -1) incl.push(i);
+    }
+    return starts.concat(incl).slice(0, MAX_LIST_ITEMS);
+  }
+
+  function closeItemList() {
+    buySellList.classList.remove('open');
+    pickedIdx = -1;
+  }
+
+  function renderItemList() {
+    var q = buySellInput.value;
+    var hits = searchItems(q);
+    pickedIdx = -1;
+
+    if (!q.trim()) { buySellList.innerHTML = ''; closeItemList(); return; }
+
+    if (hits.length === 0) {
+      buySellList.innerHTML = '<div class="combo-empty">Ничего не найдено</div>';
+      buySellList.classList.add('open');
+      return;
+    }
+
+    var mode = currentMode();
+    var html = '';
+    for (var k = 0; k < hits.length; k++) {
+      var it = ITEMS[hits[k]];
+      var price = priceFor(it, mode);
+      html += '<div class="combo-item" data-i="' + hits[k] + '" role="option">' +
+        '<span>' + markMatch(it.n, q) + '</span>' +
+        '<span class="price">' + (price === null ? '—' : fmtInt(price)) + '</span></div>';
+    }
+    buySellList.innerHTML = html;
+    buySellList.classList.add('open');
+  }
+
+  /* Добавление позиции: повторный выбор предмета увеличивает количество */
+  function addItem(name) {
+    var item = null;
+    for (var i = 0; i < ITEMS.length; i++) {
+      if (ITEMS[i].n === name) { item = ITEMS[i]; break; }
+    }
     if (!item) return;
 
-    var mode = modeSelect.value; // 'buy' or 'sell'
-    var price = mode === 'buy' ? (item.buy !== '-' ? item.buy : 0) : (item.sell !== '-' ? item.sell : 0);
-
-    if (price === 0) return; // Skip if price is not available
-
-    // Check if item already in list
-    var existingRow = document.querySelector('.item-row[data-name="' + name + '"]');
-    if (existingRow) {
-      var existingQty = parseInt(existingRow.querySelector('.item-qty').textContent) || 1;
-      var newQty = existingQty + qty;
-      existingRow.querySelector('.item-qty').textContent = newQty;
-      existingRow.querySelector('.item-price').textContent = fmtInt(price * newQty);
-    } else {
-      var row = document.createElement('div');
-      row.className = 'result-row item-row';
-      row.innerHTML = '<div class="r-label">' + name + '</div>' +
-        '<div class="r-value"><div class="item-qty">' + qty + '</div><span class="item-pr-unit">' + fmtInt(price) + '</span></div>' +
-        '<div class="r-btns"><button class="item-minus">−</button><button class="item-plus">+</button></div>';
-      row.setAttribute('data-name', name);
-      itemsList.appendChild(row);
-
-      // Add event listeners for +/- buttons
-      row.querySelector('.item-plus').addEventListener('click', function () { addItemToList(name, 1); });
-      row.querySelector('.item-minus').addEventListener('click', function () { addItemToList(name, -1); });
+    if (itemRows[name] !== undefined) {
+      setRowQty(name, itemRows[name] + 1);
+      return;
     }
-    updateTotal();
+
+    var row = document.createElement('div');
+    row.className = 'item-row';
+    row.setAttribute('data-name', name);
+    row.innerHTML =
+      '<span class="item-name">' + escapeHtml(name) + '</span>' +
+      '<span class="item-amount" data-amount>0</span>' +
+      '<span class="stepper">' +
+        '<button type="button" data-minus aria-label="Уменьшить количество">−</button>' +
+        '<input type="number" data-qty inputmode="numeric" min="1" step="1" value="1" aria-label="Количество">' +
+        '<button type="button" data-plus aria-label="Увеличить количество">+</button>' +
+      '</span>';
+
+    itemsList.appendChild(row);
+    itemRows[name] = 1;
+
+    row.querySelector('[data-plus]').addEventListener('click', function () {
+      setRowQty(name, itemRows[name] + 1);
+    });
+    row.querySelector('[data-minus]').addEventListener('click', function () {
+      setRowQty(name, Math.max(1, itemRows[name] - 1));
+    });
+    row.querySelector('[data-qty]').addEventListener('input', function () {
+      setRowQty(name, clampInt(this.value, 1, 999, 1));
+    });
+
+    renderRows();
   }
 
-  function updateTotal() {
+  function setRowQty(name, qty) {
+    if (itemRows[name] === undefined) return;
+    itemRows[name] = qty;
+    var row = itemsList.querySelector('.item-row[data-name="' + cssEscape(name) + '"]');
+    if (row) row.querySelector('[data-qty]').value = String(qty);
+    renderRows();
+  }
+
+  /* Пересчёт сумм в списке и итога; вызывается и при смене режима */
+  function renderRows() {
+    var mode = currentMode();
     var total = 0;
     var rows = itemsList.querySelectorAll('.item-row');
-    rows.forEach(function (row) {
-      var priceText = row.querySelector('.item-pr-unit').textContent.replace('&nbsp;', '').replace(' ', '');
-      var qty = parseInt(row.querySelector('.item-qty').textContent) || 1;
-      total += parseInt(priceText.replace(/[^\d]/g, ''), 10) * qty;
-    });
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      var name = row.getAttribute('data-name');
+      var item = null;
+      for (var j = 0; j < ITEMS.length; j++) {
+        if (ITEMS[j].n === name) { item = ITEMS[j]; break; }
+      }
+      var qty = itemRows[name] || 1;
+      var price = item ? priceFor(item, mode) : null;
+      var amount = row.querySelector('[data-amount]');
+      amount.textContent = price === null ? '—' : fmtInt(price * qty);
+      if (price !== null) total += price * qty;
+    }
     totalValue.textContent = fmtInt(total);
   }
 
-  // Event listeners
-  buySellInput.addEventListener('input', function () {
-    var value = this.value.trim();
-    if (!value) return;
+  /* Экранирование имени для селектора атрибута */
+  function cssEscape(s) {
+    return s.replace(/["\\]/g, '\\$&');
+  }
 
-    // Try to find exact match or starts-with match
-    var item = findItem(value);
-    if (item) {
-      addItemToList(value, 1);
-      buySellInput.value = '';
+  buySellInput.addEventListener('input', renderItemList);
+  buySellInput.addEventListener('focus', renderItemList);
+
+  buySellInput.addEventListener('keydown', function (e) {
+    var opts = buySellList.querySelectorAll('.combo-item');
+    if (!buySellList.classList.contains('open') || opts.length === 0) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      pickedIdx = (pickedIdx + 1) % opts.length;
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      pickedIdx = (pickedIdx - 1 + opts.length) % opts.length;
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      pickItem(parseInt(opts[pickedIdx >= 0 ? pickedIdx : 0].getAttribute('data-i'), 10));
+      return;
+    } else if (e.key === 'Escape') {
+      closeItemList();
+      return;
+    } else {
+      return;
+    }
+    for (var i = 0; i < opts.length; i++) opts[i].classList.toggle('active', i === pickedIdx);
+    opts[pickedIdx].scrollIntoView({ block: 'nearest' });
+  });
+
+  buySellList.addEventListener('mousedown', function (e) {
+    var opt = e.target.closest('.combo-item');
+    if (opt) {
+      e.preventDefault();
+      pickItem(parseInt(opt.getAttribute('data-i'), 10));
     }
   });
 
-  modeSelect.addEventListener('change', updateTotal);
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.combo')) closeItemList();
+  });
 
-  // Add global button to add item (optional)
-  window.addBuyItem = function(name) {
-    addItemToList(name, 1);
+  function pickItem(i) {
+    var item = ITEMS[i];
+    if (!item) return;
+    addItem(item.n);
     buySellInput.value = '';
-  };
+    closeItemList();
+    buySellInput.focus();
+  }
 
   fillRecipes();
 })();
