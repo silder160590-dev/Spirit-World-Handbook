@@ -13,6 +13,163 @@
   <link rel="stylesheet" href="./calculator.css">
   <script src="./monsters-data.js"></script>
   <script src="./recipes-data.js"></script>
+  <script>
+    // Item data with buy and sell prices
+    var ITEMS = [
+      { n: "Аирыль", sell: 105, buy: 7 },
+      { n: "Айсилециум", sell: 105, buy: 7 },
+      { n: "Акуния", sell: 150, buy: 10 },
+      { n: "Алозия", sell: 105, buy: 7 },
+      { n: "Амброс", sell: 105, buy: 7 },
+      { n: "Амоний", sell: 105, buy: 7 },
+      { n: "Ассетс", sell: 105, buy: 7 },
+      { n: "Балиастр синий", sell: 105, buy: 7 },
+      { n: "Балл", sell: 225, buy: 15 },
+      { n: "Белентия", sell: 105, buy: 7 },
+      { n: "Белолистник", sell: 105, buy: 7 },
+      { n: "Бельёнэ", sell: 105, buy: 7 },
+      { n: "Березка ивовая", sell: 150, buy: 10 },
+      { n: "Бимос", sell: 105, buy: 7 },
+      { n: "Блэквум", sell: 105, buy: 7 },
+      { n: "Болис", sell: 105, buy: 7 },
+      { n: "Большелобый тион", sell: 105, buy: 7 },
+      { n: "Ватос", sell: 450, buy: 30 },
+      { n: "Вульреспина", sell: 105, buy: 7 },
+      { n: "Вьюн Росса", sell: 350, buy: 23 },
+      { n: "Ганезис", sell: 150, buy: 10 },
+      { n: "Геннес", sell: 105, buy: 7 },
+      { n: "Гизмо", sell: 550, buy: 36 },
+      { n: "Глазон", sell: 105, buy: 7 },
+      { n: "Горгонзола", sell: 105, buy: 7 },
+      { n: "Грипсферина", sell: 105, buy: 7 },
+      { n: "Грустная колючка", sell: 105, buy: 7 },
+      { n: "Гувеник", sell: 150, buy: 10 },
+      { n: "Гуллидон", sell: 105, buy: 7 },
+      { n: "Дендробиум", sell: 105, buy: 7 },
+      { n: "Дирунга", sell: 105, buy: 7 },
+      { n: "Домний", sell: 105, buy: 7 },
+      { n: "Домунди", sell: 105, buy: 7 },
+      { n: "Дория", sell: 150, buy: 10 },
+      { n: "Драммис", sell: 105, buy: 7 },
+      { n: "Дусторми", sell: 105, buy: 7 },
+      { n: "Дымчатый хвост", sell: 105, buy: 7 },
+      { n: "Екки", sell: 105, buy: 7 },
+      { n: "Ером", sell: 105, buy: 7 },
+      { n: "Еспина", sell: 105, buy: 7 },
+      { n: "Жиловица", sell: 450, buy: 30 },
+      { n: "Жимор", sell: 105, buy: 7 },
+      { n: "Жустиния", sell: 105, buy: 7 },
+      { n: "Загробник", sell: 150, buy: 10 },
+      { n: "Зальвия", sell: 105, buy: 7 },
+      { n: "Заморожник", sell: 105, buy: 7 },
+      { n: "Звёздчатый плод", sell: 105, buy: 7 },
+      { n: "Земноводник", sell: 105, buy: 7 },
+      { n: "Зубастая сари", sell: 105, buy: 7 },
+      { n: "Игос", sell: 150, buy: 10 },
+      { n: "Идрос", sell: 105, buy: 7 },
+      { n: "Изумрудный делликс", sell: 105, buy: 7 },
+      { n: "Иридий", sell: 105, buy: 7 },
+      { n: "Исумэ", sell: 105, buy: 7 },
+      { n: "ЯENUa", sell: 105, buy: 7 },
+      { n: "Кальбит", sell: 105, buy: 7 },
+      { n: "Кальпез", sell: 105, buy: 7 },
+      { n: "Каменная роза", sell: 105, buy: 7 },
+      { n: "Карелис", sell: 105, buy: 7 },
+      { n: "Квялистник", sell: 150, buy: 10 },
+      { n: "Кленовник", sell: 105, buy: 7 },
+      { n: "Кникс", sell: 105, buy: 7 },
+      { n: "Колокольчик бимус", sell: 105, buy: 7 },
+      { n: "Крагос", sell: 105, buy: 7 },
+      { n: "Краснолюдник", sell: 105, buy: 7 },
+      { n: "Креатис", sell: 150, buy: 10 },
+      { n: "Кридолит", sell: 105, buy: 7 },
+      { n: "Кристалликус", sell: 150, buy: 10 },
+      { n: "Кристальный цветок", sell: 350, buy: 23 },
+      { n: "Кумиилс", sell: 150, buy: 10 },
+      { n: "Лайтпроз", sell: 105, buy: 7 },
+      { n: "Лаклиф", sell: 105, buy: 7 },
+      { n: "Майлис", sell: 105, buy: 7 },
+      { n: "Марсли", sell: 105, buy: 7 },
+      { n: "Мертвое древо", sell: 105, buy: 7 },
+      { n: "Минго", sell: 150, buy: 10 },
+      { n: "Моллинарник", sell: 105, buy: 7 },
+      { n: "Молониз", sell: 105, buy: 7 },
+      { n: "Мусорник", sell: 105, buy: 7 },
+      { n: "Набанос", sell: 105, buy: 7 },
+      { n: "Неоний", sell: 105, buy: 7 },
+      { n: "Никкири", sell: 105, buy: 7 },
+      { n: "Новизлок", sell: 105, buy: 7 },
+      { n: "Ночной пустынник", sell: 105, buy: 7 },
+      { n: "Огненнохвостая тия", sell: 105, buy: 7 },
+      { n: "Оклюминий", sell: 105, buy: 7 },
+      { n: "Орафикус", sell: 150, buy: 10 },
+      { n: "Острохвостка", sell: 105, buy: 7 },
+      { n: "Отикус", sell: 105, buy: 7 },
+      { n: "Парилий", sell: 105, buy: 7 },
+      { n: "Перлиций", sell: 105, buy: 7 },
+      { n: "Полистра", sell: 150, buy: 10 },
+      { n: "Полуночный сливовник", sell: 150, buy: 10 },
+      { n: "Призрачный таморник", sell: 150, buy: 10 },
+      { n: "Пурпурник", sell: 105, buy: 7 },
+      { n: "Пыннян", sell: 105, buy: 7 },
+      { n: "Радужник", sell: 105, buy: 7 },
+      { n: "Радужный таракšakкум", sell: 105, buy: 7 },
+      { n: "Ракуния", sell: 105, buy: 7 },
+      { n: "Раух топаз", sell: 150, buy: 10 },
+      { n: "Рилейник", sell: 105, buy: 7 },
+      { n: "Сагитариус", sell: 105, buy: 7 },
+      { n: "Сандженник", sell: 105, buy: 7 },
+      { n: "Сантаниум", sell: 105, buy: 7 },
+      { n: "Сантилиум", sell: 105, buy: 7 },
+      { n: "Сараджё", sell: 105, buy: 7 },
+      { n: "Свет рау", sell: 150, buy: 10 },
+      { n: "Светящаяся солкозия", sell: 105, buy: 7 },
+      { n: "Свэйфи", sell: 105, buy: 7 },
+      { n: "Сердце камня", sell: 105, buy: 7 },
+      { n: "Сикроит улис", sell: 105, buy: 7 },
+      { n: "Сикроит цулис", sell: 150, buy: 10 },
+      { n: "Снежная грибница", sell: 105, buy: 7 },
+      { n: "Соронис", sell: 105, buy: 7 },
+      { n: "Суливерова Роза", sell: 105, buy: 7 },
+      { n: "Табибито", sell: 105, buy: 7 },
+      { n: "Такalla", sell: 105, buy: 7 },
+      { n: "Тальки", sell: 105, buy: 7 },
+      { n: "Тандурия", sell: 105, buy: 7 },
+      { n: "Таркация", sell: 105, buy: 7 },
+      { n: "Томник", sell: 105, buy: 7 },
+      { n: "Треон (стихии)", sell: 105, buy: 7 },
+      { n: "Туманный цветок", sell: 105, buy: 7 },
+      { n: "Тхарсус", sell: 105, buy: 7 },
+      { n: "Укриитос", sell: 150, buy: 10 },
+      { n: "Фалькотник", sell: 105, buy: 7 },
+      { n: "Фарадий", sell: 105, buy: 7 },
+      { n: "Фариний", sell: 105, buy: 7 },
+      { n: "Филинос", sell: 450, buy: 30 },
+      { n: "Финия", sell: 150, buy: 10 },
+      { n: "Фиолетовая светилка", sell: 105, buy: 7 },
+      { n: "Фона", sell: 105, buy: 7 },
+      { n: "Форония", sell: 225, buy: 15 },
+      { n: "Хаачиний", sell: 105, buy: 7 },
+      { n: "Хомаро", sell: 105, buy: 7 },
+      { n: "Хорровша", sell: 105, buy: 7 },
+      { n: "Цинума", sell: 105, buy: 7 },
+      { n: "Чагынно", sell: 105, buy: 7 },
+      { n: "Частоний", sell: 105, buy: 7 },
+      { n: "Чащник", sell: 105, buy: 7 },
+      { n: "Чешуя марéли", sell: 105, buy: 7 },
+      { n: "Шагаон", sell: 105, buy: 7 },
+      { n: "Шальник", sell: 105, buy: 7 },
+      { n: "Шикта", sell: 105, buy: 7 },
+      { n: "Шишута", sell: 105, buy: 7 },
+      { n: "Щувних", sell: 105, buy: 7 },
+      { n: "Эйсог", sell: 105, buy: 7 },
+      { n: "Экнос", sell: 225, buy: 15 },
+      { n: "Этъюс", sell: 105, buy: 7 },
+      { n: "Ямлиста", sell: 105, buy: 7 },
+      { n: "Ямоши", sell: 105, buy: 7 },
+      { n: "Якудза", sell: 105, buy: 7 }
+    ];
+    ];
 </head>
 <body>
   <header class="hero">
@@ -24,7 +181,43 @@
   </header>
 
   <main>
-    <section id="monstry">
+    <section id="buy-sell">
+      <div class="wrap">
+        <h2 class="sec-title">Покупка и продажа</h2>
+        <p class="sec-sub">Выберите предмет и укажите количество для расчёта общей суммы</p>
+        
+        <div class="calc-card">
+          <div class="fields">
+            <div class="field">
+              <label for="item-select">Предмет</label>
+              <div class="combo">
+                <input type="text" id="item-input" autocomplete="off" spellcheck="false" placeholder="Начните вводить имя…">
+                <div class="combo-list" id="item-list" role="listbox" aria-label="Варианты предметов"></div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="mode-select">Режим</label>
+              <div class="combo">
+                <select id="mode-select">
+                  <option value="sell">Продажа</option>
+                  <option value="buy" selected>Покупка</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="results">
+            <div class="result-row" id="items-list">
+              <!-- Items will be added here -->
+            </div>
+            <div class="result-row total" id="total-row">
+              <span class="r-label">Итого:</span>
+              <span class="r-value" id="total-value">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
       <div class="wrap">
         <h2 class="sec-title">Опыт и урон</h2>
         <p class="sec-sub">Выберите монстра из бестиария — расчёт обновляется сразу</p>

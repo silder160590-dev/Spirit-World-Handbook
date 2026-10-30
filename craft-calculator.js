@@ -203,5 +203,81 @@
     profSelect.focus();
   });
 
+  /* ——— Покупка/Продажа калькулятор ——— */
+  var buySellInput = document.getElementById('item-input');
+  var buySellList = document.getElementById('item-list');
+  var modeSelect = document.getElementById('mode-select');
+  var itemsList = document.getElementById('items-list');
+  var totalValue = document.getElementById('total-value');
+  var ITEMS = window.ITEMS || [];
+
+  function findItem(name) {
+    return ITEMS.find(function (x) { return x.n === name; });
+  }
+
+  function addItemToList(name, qty) {
+    var item = findItem(name);
+    if (!item) return;
+
+    var mode = modeSelect.value; // 'buy' or 'sell'
+    var price = mode === 'buy' ? (item.buy !== '-' ? item.buy : 0) : (item.sell !== '-' ? item.sell : 0);
+
+    if (price === 0) return; // Skip if price is not available
+
+    // Check if item already in list
+    var existingRow = document.querySelector('.item-row[data-name="' + name + '"]');
+    if (existingRow) {
+      var existingQty = parseInt(existingRow.querySelector('.item-qty').textContent) || 1;
+      var newQty = existingQty + qty;
+      existingRow.querySelector('.item-qty').textContent = newQty;
+      existingRow.querySelector('.item-price').textContent = fmtInt(price * newQty);
+    } else {
+      var row = document.createElement('div');
+      row.className = 'result-row item-row';
+      row.innerHTML = '<div class="r-label">' + name + '</div>' +
+        '<div class="r-value"><div class="item-qty">' + qty + '</div><span class="item-pr-unit">' + fmtInt(price) + '</span></div>' +
+        '<div class="r-btns"><button class="item-minus">−</button><button class="item-plus">+</button></div>';
+      row.setAttribute('data-name', name);
+      itemsList.appendChild(row);
+
+      // Add event listeners for +/- buttons
+      row.querySelector('.item-plus').addEventListener('click', function () { addItemToList(name, 1); });
+      row.querySelector('.item-minus').addEventListener('click', function () { addItemToList(name, -1); });
+    }
+    updateTotal();
+  }
+
+  function updateTotal() {
+    var total = 0;
+    var rows = itemsList.querySelectorAll('.item-row');
+    rows.forEach(function (row) {
+      var priceText = row.querySelector('.item-pr-unit').textContent.replace('&nbsp;', '').replace(' ', '');
+      var qty = parseInt(row.querySelector('.item-qty').textContent) || 1;
+      total += parseInt(priceText.replace(/[^\d]/g, ''), 10) * qty;
+    });
+    totalValue.textContent = fmtInt(total);
+  }
+
+  // Event listeners
+  buySellInput.addEventListener('input', function () {
+    var value = this.value.trim();
+    if (!value) return;
+
+    // Try to find exact match or starts-with match
+    var item = findItem(value);
+    if (item) {
+      addItemToList(value, 1);
+      buySellInput.value = '';
+    }
+  });
+
+  modeSelect.addEventListener('change', updateTotal);
+
+  // Add global button to add item (optional)
+  window.addBuyItem = function(name) {
+    addItemToList(name, 1);
+    buySellInput.value = '';
+  };
+
   fillRecipes();
 })();
