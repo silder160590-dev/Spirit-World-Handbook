@@ -1,6 +1,6 @@
 ﻿/* Data: item buy/sell prices (продажа/покупка) */
 var ITEMS = [
-  { n: "Аирыль", sell: 105, buy: 7 },
+  { n: "Аирыль", buy: 7, sell: 105 },
   { n: "Айсилециум", sell: 105, buy: 7 },
   { n: "Акуния", sell: 150, buy: 10 },
   { n: "Алозия", sell: 105, buy: 7 },
