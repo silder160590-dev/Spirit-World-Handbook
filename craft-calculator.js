@@ -308,10 +308,13 @@
     row.innerHTML =
       '<span class="item-name">' + escapeHtml(name) + '</span>' +
       '<span class="item-amount" data-amount>0</span>' +
-      '<span class="stepper">' +
-        '<button type="button" data-minus aria-label="Уменьшить количество">−</button>' +
-        '<input type="number" data-qty inputmode="numeric" min="1" step="1" value="1" aria-label="Количество">' +
-        '<button type="button" data-plus aria-label="Увеличить количество">+</button>' +
+      '<span class="item-actions">' +
+        '<span class="stepper">' +
+          '<button type="button" data-minus aria-label="Уменьшить количество">−</button>' +
+          '<input type="number" data-qty inputmode="numeric" min="1" step="1" value="1" aria-label="Количество">' +
+          '<button type="button" data-plus aria-label="Увеличить количество">+</button>' +
+        '</span>' +
+        '<button type="button" class="row-clear" data-clear aria-label="Убрать позицию" title="Убрать позицию">×</button>' +
       '</span>';
 
     itemsList.appendChild(row);
@@ -325,6 +328,11 @@
     });
     row.querySelector('[data-qty]').addEventListener('input', function () {
       setRowQty(name, clampInt(this.value, 1, 999, 1));
+    });
+    row.querySelector('[data-clear]').addEventListener('click', function () {
+      delete itemRows[name];
+      row.remove();
+      renderRows();
     });
 
     renderRows();

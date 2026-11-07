@@ -244,18 +244,42 @@
       white-space: nowrap;
     }
 
-    .item-row .stepper { flex: none; gap: 6px; }
-    .item-row .stepper button { width: 38px; font-size: 1.35rem; }
-    .item-row .stepper input {
-      width: 56px;
+    /* Степпер ужат до 80% прежней ширины, освободившиеся 20% — кнопка «×» (убрать позицию) */
+    .item-row .item-actions {
+      display: flex;
+      align-items: stretch;
+      gap: 6px;
+      flex: none;
+    }
+    .item-row .item-actions .stepper { gap: 6px; }
+    .item-row .item-actions .stepper button { width: 30px; font-size: 1.25rem; }
+    .item-row .item-actions .stepper input {
+      width: 44px;
       font-family: var(--serif);
       font-size: 1.05rem;
       color: var(--ink-600);
       background: var(--paper-0);
       border: 1px solid var(--paper-300);
       border-radius: 10px;
-      padding: 7px 4px;
+      padding: 7px 2px;
     }
+
+    .row-clear {
+      flex: none;
+      width: 29px;
+      padding: 0;
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      line-height: 1;
+      color: var(--seal-500);
+      background: transparent;
+      border: 1px dashed var(--seal-500);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .row-clear:hover { background: rgba(123, 42, 28, 0.08); }
+    .row-clear:active { transform: translateY(1px); }
 
     @media (max-width: 640px) {
       .item-row { flex-wrap: wrap; }
@@ -305,6 +329,20 @@
     }
 
     .btn-clear:hover { background: rgba(123, 42, 28, 0.08); }
+
+    /* Кнопка «Очистить» внутри поля — справа от степпера/инпута */
+    .field-inline {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+    }
+    .field-inline .stepper { flex: 1 1 auto; }
+    .field-inline input[type="number"] { flex: 1 1 auto; width: auto; min-width: 0; }
+    .btn-clear-inline {
+      flex: none;
+      padding: 9px 14px;
+      white-space: nowrap;
+    }
 
     /* ——— Результаты ——— */
     .results { margin-top: 22px; display: grid; gap: 14px; }
