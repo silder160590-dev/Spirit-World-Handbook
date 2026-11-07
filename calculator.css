@@ -266,10 +266,10 @@
 
     .row-clear {
       flex: none;
-      width: 29px;
-      padding: 0;
+      padding: 6px 12px;
       font-family: var(--serif);
-      font-size: 1.25rem;
+      font-size: 0.82rem;
+      font-weight: 700;
       line-height: 1;
       color: var(--seal-500);
       background: transparent;
@@ -277,6 +277,7 @@
       border-radius: 10px;
       cursor: pointer;
       transition: background 0.15s ease;
+      white-space: nowrap;
     }
     .row-clear:hover { background: rgba(123, 42, 28, 0.08); }
     .row-clear:active { transform: translateY(1px); }
@@ -343,6 +344,8 @@
       padding: 9px 14px;
       white-space: nowrap;
     }
+    /* Поле на всю ширину карточки: кнопка прижата к правому краю */
+    .field-full { grid-column: 1 / -1; }
 
     /* ——— Результаты ——— */
     .results { margin-top: 22px; display: grid; gap: 14px; }

@@ -314,7 +314,7 @@
           '<input type="number" data-qty inputmode="numeric" min="1" step="1" value="1" aria-label="Количество">' +
           '<button type="button" data-plus aria-label="Увеличить количество">+</button>' +
         '</span>' +
-        '<button type="button" class="row-clear" data-clear aria-label="Убрать позицию" title="Убрать позицию">×</button>' +
+        '<button type="button" class="row-clear" data-clear aria-label="Очистить позицию" title="Очистить позицию">Очистить</button>' +
       '</span>';
 
     itemsList.appendChild(row);
