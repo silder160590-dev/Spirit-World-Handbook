@@ -303,19 +303,19 @@
     }
 
     var row = document.createElement('div');
-    row.className = 'item-row';
+    row.className = 'item-line';
     row.setAttribute('data-name', name);
     row.innerHTML =
-      '<span class="item-name">' + escapeHtml(name) + '</span>' +
-      '<span class="item-amount" data-amount>0</span>' +
-      '<span class="item-actions">' +
+      '<div class="item-row">' +
+        '<span class="item-name">' + escapeHtml(name) + '</span>' +
+        '<span class="item-amount" data-amount>0</span>' +
         '<span class="stepper">' +
           '<button type="button" data-minus aria-label="Уменьшить количество">−</button>' +
           '<input type="number" data-qty inputmode="numeric" min="1" step="1" value="1" aria-label="Количество">' +
           '<button type="button" data-plus aria-label="Увеличить количество">+</button>' +
         '</span>' +
-        '<button type="button" class="row-clear" data-clear aria-label="Убрать позицию" title="Убрать позицию">×</button>' +
-      '</span>';
+      '</div>' +
+      '<button type="button" class="row-clear" data-clear aria-label="Очистить позицию" title="Очистить позицию">Очистить</button>';
 
     itemsList.appendChild(row);
     itemRows[name] = 1;
@@ -341,7 +341,7 @@
   function setRowQty(name, qty) {
     if (itemRows[name] === undefined) return;
     itemRows[name] = qty;
-    var row = itemsList.querySelector('.item-row[data-name="' + cssEscape(name) + '"]');
+    var row = itemsList.querySelector('.item-line[data-name="' + cssEscape(name) + '"]');
     if (row) row.querySelector('[data-qty]').value = String(qty);
     renderRows();
   }
@@ -350,7 +350,7 @@
   function renderRows() {
     var mode = currentMode();
     var total = 0;
-    var rows = itemsList.querySelectorAll('.item-row');
+    var rows = itemsList.querySelectorAll('.item-line');
     for (var i = 0; i < rows.length; i++) {
       var row = rows[i];
       var name = row.getAttribute('data-name');

@@ -103,14 +103,15 @@
 
             <div class="field">
               <label for="count-input">Количество</label>
-              <div class="field-inline">
-                <div class="stepper">
-                  <button type="button" id="count-minus" aria-label="Уменьшить количество">−</button>
-                  <input type="number" id="count-input" inputmode="numeric" min="1" step="1" value="1" aria-label="Количество">
-                  <button type="button" id="count-plus" aria-label="Увеличить количество">+</button>
-                </div>
-                <button type="button" class="btn-clear btn-clear-inline" id="monster-clear">Очистить</button>
+              <div class="stepper">
+                <button type="button" id="count-minus" aria-label="Уменьшить количество">−</button>
+                <input type="number" id="count-input" inputmode="numeric" min="1" step="1" value="1" aria-label="Количество">
+                <button type="button" id="count-plus" aria-label="Увеличить количество">+</button>
               </div>
+            </div>
+
+            <div class="field-clear">
+              <button type="button" class="btn-clear" id="monster-clear">Очистить</button>
             </div>
           </div>
 
@@ -173,10 +174,11 @@
 
             <div class="field">
               <label for="gain2-input">Начисление</label>
-              <div class="field-inline">
-                <input type="number" id="gain2-input" inputmode="numeric" min="0" step="1" placeholder="—" aria-label="Начисление опыта">
-                <button type="button" class="btn-clear btn-clear-inline" id="lvl2-clear">Очистить</button>
-              </div>
+              <input type="number" id="gain2-input" inputmode="numeric" min="0" step="1" placeholder="—" aria-label="Начисление опыта">
+            </div>
+
+            <div class="field-clear">
+              <button type="button" class="btn-clear" id="lvl2-clear">Очистить</button>
             </div>
           </div>
 
