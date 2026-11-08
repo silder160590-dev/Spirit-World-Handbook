@@ -245,6 +245,18 @@
     })(modeButtons[mb]);
   }
 
+  /* Одна кнопка «Очистить» на весь список — вместо кнопки в каждой позиции */
+  var itemsHead = document.getElementById('items-head');
+  var itemsClearBtn = document.getElementById('items-clear');
+
+  function clearItems() {
+    itemRows = {};
+    itemsList.innerHTML = '';
+    renderRows();
+  }
+
+  if (itemsClearBtn) itemsClearBtn.addEventListener('click', clearItems);
+
   /* Поиск по названию: сначала «начинается с», затем «содержит» */
   function searchItems(q) {
     var nq = norm(q.trim());
@@ -314,8 +326,7 @@
           '<input type="number" data-qty inputmode="numeric" min="1" step="1" value="1" aria-label="Количество">' +
           '<button type="button" data-plus aria-label="Увеличить количество">+</button>' +
         '</span>' +
-      '</div>' +
-      '<button type="button" class="row-clear" data-clear aria-label="Очистить позицию" title="Очистить позицию">Очистить</button>';
+      '</div>';
 
     itemsList.appendChild(row);
     itemRows[name] = 1;
@@ -328,11 +339,6 @@
     });
     row.querySelector('[data-qty]').addEventListener('input', function () {
       setRowQty(name, clampInt(this.value, 1, 999, 1));
-    });
-    row.querySelector('[data-clear]').addEventListener('click', function () {
-      delete itemRows[name];
-      row.remove();
-      renderRows();
     });
 
     renderRows();
@@ -365,6 +371,8 @@
       if (price !== null) total += price * qty;
     }
     totalValue.textContent = fmtInt(total);
+    /* Кнопка «Очистить» нужна только когда в списке есть позиции */
+    if (itemsHead) itemsHead.hidden = rows.length === 0;
   }
 
   /* Экранирование имени для селектора атрибута */

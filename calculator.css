@@ -244,12 +244,8 @@
       white-space: nowrap;
     }
 
-    /* Строка позиции + отдельная кнопка «Очистить» со своим фоном */
-    .item-line {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    /* Строка позиции */
+    .item-line { display: flex; align-items: center; }
     .item-line .item-row { flex: 1 1 auto; }
 
     .item-row .stepper { flex: none; gap: 6px; }
@@ -265,23 +261,9 @@
       padding: 7px 4px;
     }
 
-    .row-clear {
-      flex: none;
-      align-self: stretch;
-      padding: 8px 14px;
-      font-family: var(--serif);
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--seal-500);
-      background: var(--paper-100);
-      border: 1px solid var(--paper-300);
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.15s ease;
-      white-space: nowrap;
-    }
-    .row-clear:hover { background: var(--paper-200); }
-    .row-clear:active { transform: translateY(1px); }
+    /* Одна кнопка «Очистить» на весь список позиций — над списком */
+    .items-head { display: flex; justify-content: flex-end; }
+    .items-head[hidden] { display: none; }
 
     @media (max-width: 640px) {
       .item-row { flex-wrap: wrap; }
