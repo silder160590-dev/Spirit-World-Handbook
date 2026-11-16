@@ -370,11 +370,11 @@
 
     .btn-clear:hover { background: rgba(123, 42, 28, 0.08); }
 
-    /* Кнопка «Очистить» — соседняя колонка сетки, прижата к правому краю карточки */
+    /* Кнопка «Очистить» — соседняя колонка сетки, по центру блока */
     .field-clear {
       display: flex;
       align-items: flex-end;
-      justify-content: flex-end;
+      justify-content: center;
     }
 
     /* ——— Результаты ——— */
