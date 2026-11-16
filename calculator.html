@@ -416,15 +416,16 @@
         mList.classList.add('open');
         return;
       }
-      var m = MONSTERS[hits[0]];
-      var v0 = VARIANTS[0];
-      var html = '<div class="combo-item' + (m.min == null ? ' none-lvl' : '') + '" data-i="' + hits[0] + '" role="option">' +
-        '<span>' + markMatch(m.n, q) + '</span>' +
-        '<span class="lvl">' + lvlLabel(m) + '</span>' +
-        '<span class="combo-el">' + elementChipsHtml(m.el) + '</span>' +
-        '<span class="combo-variant">· Ур. ' + v0.lvl + ' · урон ' + v0.dmg + '% · макс ' + v0.max + '</span></div>';
-      if (res.more) {
-        html += '<div class="combo-empty">Хочешь другой — пиши больше букв имени</div>';
+      /* Для каждого найденного монстра — все 6 вариантов прямо в выпадашке */
+      var html = '';
+      for (var k = 0; k < hits.length; k++) {
+        var m = MONSTERS[hits[k]];
+        for (var vi = 0; vi < VARIANTS.length; vi++) {
+          var v = VARIANTS[vi];
+          html += '<div class="combo-item" data-i="' + hits[k] + '" data-v="' + vi + '" role="option">' +
+            '<span>' + markMatch(m.n, q) + '</span>' +
+            '<span class="combo-variant">· Ур. ' + v.lvl + ' · урон ' + v.dmg + '% · макс ' + v.max + '</span></div>';
+        }
       }
       mList.innerHTML = html;
       mList.classList.add('open');
@@ -432,17 +433,19 @@
 
     function closeList() { mList.classList.remove('open'); activeIdx = -1; }
 
-    function pick(i) {
+    function pick(i, v) {
       var m = MONSTERS[i];
       if (!m) return;
+      if (v === undefined) v = 0;
       current = m;
       mInput.value = m.n;
       closeList();
       expSel.value = '1';
       cntInput.value = '1';
-      currentVariant = 0;
-      vLevelEl.textContent = 'Уровень 1';
-      vDmgEl.textContent = 'Урон 60%';
+      currentVariant = v;
+      var vv = VARIANTS[v];
+      vLevelEl.textContent = 'Уровень ' + vv.lvl;
+      vDmgEl.textContent = 'Урон ' + vv.dmg + '%';
       recalc1();
       updateCityList();
     }
@@ -455,7 +458,7 @@
         rowLoot.hidden = true;
         return;
       }
-      var v = VARIANTS[0];
+      var v = VARIANTS[currentVariant];
       var level = (current.min != null) ? clampInt(v.lvl, current.min, current.max, current.min) : 1;
       var expPct = parseFloat(expSel.value);
       var dmgPct = v.dmg;
@@ -526,7 +529,8 @@
         activeIdx = (activeIdx - 1 + items.length) % items.length;
       } else if (e.key === 'Enter') {
         e.preventDefault();
-        pick(parseInt(items[activeIdx >= 0 ? activeIdx : 0].getAttribute('data-i'), 10));
+        var it = items[activeIdx >= 0 ? activeIdx : 0];
+        pick(parseInt(it.getAttribute('data-i'), 10), parseInt(it.getAttribute('data-v'), 10));
         return;
       } else if (e.key === 'Escape') {
         closeList();
@@ -542,7 +546,7 @@
       var item = e.target.closest('.combo-item');
       if (item) {
         e.preventDefault();
-        pick(parseInt(item.getAttribute('data-i'), 10));
+        pick(parseInt(item.getAttribute('data-i'), 10), parseInt(item.getAttribute('data-v'), 10));
       }
     });
 
