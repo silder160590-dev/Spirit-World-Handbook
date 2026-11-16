@@ -77,13 +77,10 @@
             </div>
 
             <div class="field">
-              <label>Вариант монстра</label>
-              <select id="variant-select"></select>
-              <div class="variant-info" id="variant-info">
-                <span class="v-level">Уровень 1</span>
-                <span class="v-dmg">Урон 10%</span>
-                <span class="v-max">Макс. кол-во 7</span>
-              </div>
+              <label for="level-select">Уровень</label>
+              <select id="level-select" disabled>
+                <option value="">— сначала выберите монстра —</option>
+              </select>
             </div>
 
             <div class="field">
@@ -92,6 +89,18 @@
                 <option value="1" selected>100%</option>
                 <option value="0.75">75%</option>
                 <option value="0.5">50%</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="dmg-select">Процент урона</label>
+              <select id="dmg-select">
+                <option value="10" selected>10%</option>
+                <option value="20">20%</option>
+                <option value="30">30%</option>
+                <option value="40">40%</option>
+                <option value="50">50%</option>
+                <option value="60">60%</option>
               </select>
             </div>
 
@@ -303,7 +312,9 @@
     /* ——— Калькулятор 1: опыт, урон и лут ——— */
     var mInput = document.getElementById('monster-input');
     var mList = document.getElementById('monster-list');
+    var lvlSel = document.getElementById('level-select');
     var expSel = document.getElementById('exp-select');
+    var dmgSel = document.getElementById('dmg-select');
     var cntInput = document.getElementById('count-input');
     var cntMaxHint = document.getElementById('count-max-hint');
 
@@ -316,12 +327,7 @@
       { dmg: 20, lvl: 3, max: 11 },
       { dmg: 10, lvl: 3, max: 12 }
     ];
-    var currentVariant = 0;   // индекс выбранного варианта
-    var variantSelect = document.getElementById('variant-select');
-    var variantInfo = document.getElementById('variant-info');
-    var vLevel = document.querySelector('.v-level');
-    var vDmg = document.querySelector('.v-dmg');
-    var vMax = document.querySelector('.v-max');
+    var currentVariant = 0;   // индекс выбранного варианта (по умолчанию первый)
     var cntMinus = document.getElementById('count-minus');
     var cntPlus = document.getElementById('count-plus');
     var rowExp = document.getElementById('row-exp');
@@ -448,44 +454,30 @@
       mInput.value = m.n;
       closeList();
       expSel.value = '1';
+      dmgSel.value = '10';
       cntInput.value = '1';
       currentVariant = 0;
-      buildVariants();
-      selectVariant(0);
+      buildLevelOptions();
       recalc1();
       updateCityList();
     }
 
-    function buildVariants() {
-      variantSelect.innerHTML = '';
-      for (var i = 0; i < VARIANTS.length; i++) {
-        var v = VARIANTS[i];
-        var o = document.createElement('option');
-        o.value = String(i);
-        o.textContent = 'Ур. ' + v.lvl + ' · урон ' + v.dmg + '% · макс ' + v.max;
-        variantSelect.appendChild(o);
+    function buildLevelOptions() {
+      lvlSel.innerHTML = '';
+      if (current == null || current.min == null) {
+        lvlSel.disabled = true;
+        lvlSel.innerHTML = '<option value="">' + (current ? 'уровни не указаны' : '— сначала выберите монстра —') + '</option>';
+        lvlSel.value = '';
+        return;
       }
-      updateVariantInfo();
-    }
-
-    function selectVariant(idx) {
-      if (idx < 0 || idx >= VARIANTS.length) return;
-      currentVariant = idx;
-      variantSelect.value = String(idx);
-      updateVariantInfo();
-      /* сбросить количество в limites варианта и пересчитать */
-      var maxQty = VARIANTS[idx].max;
-      var qty = clampInt(cntInput.value, 1, maxQty, 1);
-      cntInput.value = String(qty);
-      cntMaxHint.textContent = 'макс. ' + maxQty;
-      recalc1();
-    }
-
-    function updateVariantInfo() {
-      var v = VARIANTS[currentVariant];
-      vLevel.textContent = 'Уровень ' + v.lvl;
-      vDmg.textContent = 'Урон ' + v.dmg + '%';
-      vMax.textContent = 'Макс. кол-во ' + v.max;
+      lvlSel.disabled = false;
+      for (var l = current.min; l <= current.max; l++) {
+        var o = document.createElement('option');
+        o.value = String(l);
+        o.textContent = l + ' ур.';
+        lvlSel.appendChild(o);
+      }
+      lvlSel.value = String(current.min);
     }
 
     function recalc1() {
@@ -496,11 +488,10 @@
         rowLoot.hidden = true;
         return;
       }
-      var v = VARIANTS[currentVariant];
-      var level = (current.min != null) ? clampInt(v.lvl, current.min, current.max, current.min) : 1;
+      var level = (current.min != null) ? clampInt(lvlSel.value, current.min, current.max, current.min) : 1;
       var expPct = parseFloat(expSel.value);
-      var dmgPct = v.dmg;
-      var maxQty = v.max;
+      var dmgPct = parseInt(dmgSel.value, 10);
+      var maxQty = VARIANTS[currentVariant].max;
       var qty = clampInt(cntInput.value, 1, maxQty, 1);
       cntInput.value = String(qty);
       cntMaxHint.textContent = 'макс. ' + maxQty;
@@ -591,10 +582,9 @@
       if (!e.target.closest('.combo')) closeList();
     });
 
-    variantSelect.addEventListener('change', function () {
-      selectVariant(parseInt(variantSelect.value, 10));
-    });
+    lvlSel.addEventListener('change', recalc1);
     expSel.addEventListener('change', recalc1);
+    dmgSel.addEventListener('change', recalc1);
     cntInput.addEventListener('input', function () {
       var maxQty = VARIANTS[currentVariant].max;
       cntInput.value = String(clampInt(cntInput.value, 1, maxQty, 1));
@@ -621,10 +611,10 @@
       mInput.value = '';
       closeList();
       currentVariant = 0;
-      buildVariants();
-      selectVariant(0);
+      buildLevelOptions();
       cntInput.value = '1';
       expSel.value = '1';
+      dmgSel.value = '10';
       recalc1();
       updateCityList();
       mInput.focus();
@@ -726,8 +716,7 @@
 
     /* ——— Инициализация ——— */
     currentVariant = 0;
-    buildVariants();
-    selectVariant(0);
+    buildLevelOptions();
     recalc1(); updateCityList();
     recalc2();
   </script>

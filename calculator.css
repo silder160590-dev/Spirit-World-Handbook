@@ -157,13 +157,6 @@
       box-shadow: 0 1px 3px rgba(58, 44, 30, 0.18);
     }
 
-    .variant-info {
-      margin-top: 8px;
-      font-size: 0.9rem;
-      color: var(--ink-400);
-    }
-    .variant-info span { margin-right: 12px; }
-
     input[type="text"], input[type="number"], select {
       width: 100%;
       font-family: var(--serif);
