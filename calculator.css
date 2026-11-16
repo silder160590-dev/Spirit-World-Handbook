@@ -172,11 +172,6 @@
       font-size: 1rem;
       font-weight: 700;
       color: var(--gold-700);
-      padding: 10px 14px;
-      background: var(--paper-50);
-      border: 1px solid var(--paper-300);
-      border-radius: 10px;
-      display: inline-block;
     }
 
     input[type="text"], input[type="number"], select {
