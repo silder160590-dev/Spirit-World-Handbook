@@ -157,6 +157,11 @@
       box-shadow: 0 1px 3px rgba(58, 44, 30, 0.18);
     }
 
+    .variant-row {
+      display: flex;
+      gap: 16px;
+      margin-top: 4px;
+    }
     .variant-label {
       font-family: var(--serif);
       font-size: 1rem;
@@ -167,7 +172,6 @@
       border: 1px solid var(--paper-300);
       border-radius: 10px;
       display: inline-block;
-      margin-top: 4px;
     }
 
     input[type="text"], input[type="number"], select {
@@ -192,7 +196,7 @@
     select:disabled { color: var(--ink-200); cursor: default; background: var(--paper-100); }
 
     /* ——— Поиск монстра с подсказками ——— */
-    .combo { position: relative; }
+    .combo { position: relative; width: 100%; }
 
     .combo-list {
       position: absolute;
