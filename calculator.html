@@ -447,7 +447,7 @@
       mInput.value = m.n;
       closeList();
       expSel.value = '1';
-      cntInput.value = '1';
+      /* количество не сбрасываем — clamp к максимуму варианта в recalc1 */
       currentVariant = v;
       var vv = VARIANTS[v];
       vLevelEl.textContent = String(vv.lvl);
