@@ -77,7 +77,6 @@
             </div>
 
             <div class="field">
-              <label>Уровень</label>
               <span class="variant-label" id="variant-level">Уровень 1</span>
             </div>
 
@@ -91,8 +90,7 @@
             </div>
 
             <div class="field">
-              <label>Процент урона</label>
-              <span class="variant-label" id="variant-dmg">Процент урона 60%</span>
+              <span class="variant-label" id="variant-dmg">Урон 60%</span>
             </div>
 
             <div class="field">
@@ -455,7 +453,7 @@
     function updateVariantLabels() {
       var v = VARIANTS[currentVariant];
       vLevelEl.textContent = 'Уровень ' + v.lvl;
-      vDmgEl.textContent = 'Процент урона ' + v.dmg + '%';
+      vDmgEl.textContent = 'Урон ' + v.dmg + '%';
     }
 
     function recalc1() {
