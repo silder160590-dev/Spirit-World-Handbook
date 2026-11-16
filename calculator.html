@@ -429,8 +429,8 @@
         for (var vi = 0; vi < VARIANTS.length; vi++) {
           var v = VARIANTS[vi];
           html += '<div class="combo-item" data-i="' + hits[k] + '" data-v="' + vi + '" role="option">' +
-            '<span>' + markMatch(m.n, q) + '</span>' +
-            '<span class="combo-variant">· Ур. ' + v.lvl + ' · урон ' + v.dmg + '% · макс ' + v.max + '</span></div>';
+            '<span class="m-name">' + markMatch(m.n, q) + '</span>' +
+            '<span class="combo-variant">Ур. ' + v.lvl + ' · урон ' + v.dmg + '% · макс ' + v.max + '</span></div>';
         }
       }
       mList.innerHTML = html;
@@ -523,6 +523,8 @@
     /* ——— События калькулятора 1 ——— */
     mInput.addEventListener('input', function () { renderList(); updateCityList(); });
     mInput.addEventListener('focus', renderList);
+    /* Повторный клик по полю имени — снова показать варианты */
+    mInput.addEventListener('click', function () { renderList(); });
 
     mInput.addEventListener('keydown', function (e) {
       var items = mList.querySelectorAll('.combo-item');
