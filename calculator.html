@@ -70,9 +70,19 @@
           <div class="fields">
             <div class="field field-monster">
               <label for="monster-input">Монстр</label>
-              <div class="combo">
-                <input type="text" id="monster-input" autocomplete="off" spellcheck="false" placeholder="Начните вводить имя…">
-                <div class="combo-list" id="monster-list" role="listbox" aria-label="Варианты монстров"></div>
+              <div class="monster-row">
+                <div class="combo">
+                  <input type="text" id="monster-input" autocomplete="off" spellcheck="false" placeholder="Начните вводить имя…">
+                  <div class="combo-list" id="monster-list" role="listbox" aria-label="Варианты монстров"></div>
+                </div>
+                <select id="variant-select" aria-label="Вариант монстра">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
               </div>
             </div>
 
@@ -309,16 +319,17 @@
     var vLevelEl = document.getElementById('variant-level');
     var vDmgEl = document.getElementById('variant-dmg');
 
-    /* 6 вариантов монстра: [урон%, уровень, макс кол-во] */
+    /* 6 вариантов монстра: номер → урон%, ступень уровня от min монстра (0/1/2), макс кол-во */
     var VARIANTS = [
-      { dmg: 60, lvl: 1, max: 7 },
-      { dmg: 50, lvl: 1, max: 8 },
-      { dmg: 40, lvl: 2, max: 9 },
-      { dmg: 30, lvl: 2, max: 10 },
-      { dmg: 20, lvl: 3, max: 11 },
-      { dmg: 10, lvl: 3, max: 12 }
+      { dmg: 60, tier: 0, max: 7 },   /* 1 — 60% | 1 ур. | 7 шт */
+      { dmg: 20, tier: 2, max: 11 },  /* 2 — 20% | 3 ур. | 11 шт */
+      { dmg: 30, tier: 1, max: 10 },  /* 3 — 30% | 2 ур. | 10 шт */
+      { dmg: 10, tier: 2, max: 12 },  /* 4 — 10% | 3 ур. | 12 шт */
+      { dmg: 50, tier: 0, max: 8 },   /* 5 — 50% | 1 ур. | 8 шт */
+      { dmg: 40, tier: 1, max: 9 }    /* 6 — 40% | 2 ур. | 9 шт */
     ];
-    var currentVariant = 0;   // индекс выбранного варианта (по умолчанию первый)
+    var currentVariant = 0;   // индекс выбранного варианта (0 = вариант 1)
+    var variantSel = document.getElementById('variant-select');
     var cntMinus = document.getElementById('count-minus');
     var cntPlus = document.getElementById('count-plus');
     var rowExp = document.getElementById('row-exp');
@@ -365,6 +376,21 @@
       if (m.min == null) return 'уровни не указаны';
       if (m.min === m.max) return m.min + ' ур.';
       return m.min + '–' + m.max + ' ур.';
+    }
+
+    /* Уровень варианта: min + ступень (0/1/2); монстры с одним уровнем (напр. 10 ур.) — всегда он */
+    function variantLevel(v) {
+      if (current == null || current.min == null) return 1;
+      if (current.min === current.max) return current.min;
+      var lvl = current.min + v.tier;
+      if (lvl > current.max) lvl = current.max;
+      return lvl;
+    }
+
+    /* Максимум количества: без ограничений для монстров с одним уровнем */
+    function currentMaxQty() {
+      if (current != null && current.min != null && current.min === current.max) return 9999;
+      return VARIANTS[currentVariant].max;
     }
 
     function escapeHtml(s) {
@@ -422,16 +448,13 @@
         mList.classList.add('open');
         return;
       }
-      /* Для каждого найденного монстра — все 6 вариантов прямо в выпадашке */
-      var html = '';
-      for (var k = 0; k < hits.length; k++) {
-        var m = MONSTERS[hits[k]];
-        for (var vi = 0; vi < VARIANTS.length; vi++) {
-          var v = VARIANTS[vi];
-          html += '<div class="combo-item" data-i="' + hits[k] + '" data-v="' + vi + '" role="option">' +
-            '<span class="m-name">' + markMatch(m.n, q) + '</span>' +
-            '<span class="combo-variant">Ур. ' + v.lvl + ' · урон ' + v.dmg + '% · макс ' + v.max + '</span></div>';
-        }
+      var m = MONSTERS[hits[0]];
+      var html = '<div class="combo-item" data-i="' + hits[0] + '" role="option">' +
+        '<span>' + markMatch(m.n, q) + '</span>' +
+        '<span class="lvl">' + lvlLabel(m) + '</span>' +
+        '<span class="combo-el">' + elementChipsHtml(m.el) + '</span></div>';
+      if (res.more) {
+        html += '<div class="combo-empty">Хочешь другой — пиши больше букв имени</div>';
       }
       mList.innerHTML = html;
       mList.classList.add('open');
@@ -439,19 +462,24 @@
 
     function closeList() { mList.classList.remove('open'); activeIdx = -1; }
 
-    function pick(i, v) {
+    /* Подписи уровня/урона по текущему варианту и монстру */
+    function updateSummary() {
+      var v = VARIANTS[currentVariant];
+      vLevelEl.textContent = String(variantLevel(v));
+      vDmgEl.textContent = v.dmg + '%';
+    }
+
+    function pick(i) {
       var m = MONSTERS[i];
       if (!m) return;
-      if (v === undefined) v = 0;
       current = m;
       mInput.value = m.n;
       closeList();
       expSel.value = '1';
       /* количество не сбрасываем — clamp к максимуму варианта в recalc1 */
-      currentVariant = v;
-      var vv = VARIANTS[v];
-      vLevelEl.textContent = String(vv.lvl);
-      vDmgEl.textContent = vv.dmg + '%';
+      currentVariant = 0;
+      variantSel.value = '1';
+      updateSummary();
       recalc1();
       updateCityList();
     }
@@ -465,13 +493,14 @@
         return;
       }
       var v = VARIANTS[currentVariant];
-      var level = (current.min != null) ? clampInt(v.lvl, current.min, current.max, current.min) : 1;
+      var level = variantLevel(v);
       var expPct = parseFloat(expSel.value);
       var dmgPct = v.dmg;
-      var maxQty = VARIANTS[currentVariant].max;
+      var isFixedLvl = (current.min != null && current.min === current.max);
+      var maxQty = currentMaxQty();
       var qty = clampInt(cntInput.value, 1, maxQty, 1);
       cntInput.value = String(qty);
-      cntMaxHint.textContent = 'макс. ' + maxQty;
+      cntMaxHint.textContent = isFixedLvl ? 'без ограничений' : 'макс. ' + maxQty;
 
       var expOne = level * 100 * expPct;
       var expAll = expOne * qty;
@@ -538,7 +567,7 @@
       } else if (e.key === 'Enter') {
         e.preventDefault();
         var it = items[activeIdx >= 0 ? activeIdx : 0];
-        pick(parseInt(it.getAttribute('data-i'), 10), parseInt(it.getAttribute('data-v'), 10));
+        pick(parseInt(it.getAttribute('data-i'), 10));
         return;
       } else if (e.key === 'Escape') {
         closeList();
@@ -554,7 +583,7 @@
       var item = e.target.closest('.combo-item');
       if (item) {
         e.preventDefault();
-        pick(parseInt(item.getAttribute('data-i'), 10), parseInt(item.getAttribute('data-v'), 10));
+        pick(parseInt(item.getAttribute('data-i'), 10));
       }
     });
 
@@ -563,24 +592,32 @@
     });
 
     expSel.addEventListener('change', recalc1);
+    variantSel.addEventListener('change', function () {
+      var n = parseInt(variantSel.value, 10);
+      if (n >= 1 && n <= VARIANTS.length) {
+        currentVariant = n - 1;
+        updateSummary();
+        recalc1();
+      }
+    });
     cntInput.addEventListener('input', function () {
-      var maxQty = VARIANTS[currentVariant].max;
+      var maxQty = currentMaxQty();
       cntInput.value = String(clampInt(cntInput.value, 1, maxQty, 1));
       recalc1();
     });
 
     function setCount(v) {
-      var maxQty = VARIANTS[currentVariant].max;
+      var maxQty = currentMaxQty();
       cntInput.value = String(clampInt(v, 1, maxQty, 1)); updateCityList();
       recalc1();
     }
 
     cntMinus.addEventListener('click', function () {
-      var maxQty = VARIANTS[currentVariant].max;
+      var maxQty = currentMaxQty();
       setCount(clampInt(cntInput.value, 1, maxQty, 1) - 1);
     });
     cntPlus.addEventListener('click', function () {
-      var maxQty = VARIANTS[currentVariant].max;
+      var maxQty = currentMaxQty();
       setCount(clampInt(cntInput.value, 1, maxQty, 1) + 1);
     });
 
@@ -589,6 +626,7 @@
       mInput.value = '';
       closeList();
       currentVariant = 0;
+      variantSel.value = '1';
       vLevelEl.textContent = '1';
       vDmgEl.textContent = '60%';
       cntInput.value = '1';
@@ -694,6 +732,7 @@
 
     /* ——— Инициализация ——— */
     currentVariant = 0;
+    variantSel.value = '1';
     vLevelEl.textContent = '1';
     vDmgEl.textContent = '60%';
     recalc1(); updateCityList();

@@ -259,14 +259,20 @@
 
     .combo-item .lvl { flex: none; font-size: 0.88rem; color: var(--ink-200); font-style: italic; }
     .combo-item .combo-el { flex: none; margin-left: auto; }
-    .combo-item .m-name { font-family: var(--serif); font-weight: 700; }
-    .combo-item .combo-variant {
-      flex: none;
-      margin-left: auto;
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: var(--gold-700);
-      white-space: nowrap;
+    .monster-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .monster-row .combo {
+      flex: 0 0 80%;
+      max-width: 80%;
+      width: 80%;
+    }
+    .monster-row select {
+      flex: 0 0 20%;
+      max-width: 20%;
+      width: 20%;
     }
     .combo-item:hover, .combo-item.active { background: var(--paper-100); color: var(--ink-600); }
     .combo-item.none-lvl .lvl { color: var(--seal-500); }
