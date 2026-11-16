@@ -76,23 +76,15 @@
               </div>
             </div>
 
-            <div class="field variant-select">
-              <div class="variant-options" id="variant-options"></div>
-            </div>
-
-            <div class="field variant-labels">
-              <span class="variant-label" id="variant-level">Уровень 1</span>
-              <span class="variant-label" id="variant-dmg">Урон 60%</span>
-              <span class="variant-label" id="variant-max">Макс. кол-во 7</span>
-            </div>
-
-            <div class="field">
+            <div class="field field-summary">
               <label for="exp-select">Опыт</label>
               <select id="exp-select">
                 <option value="1" selected>100%</option>
                 <option value="0.75">75%</option>
                 <option value="0.5">50%</option>
               </select>
+              <span class="summary-label" id="variant-level">Уровень 1</span>
+              <span class="summary-label" id="variant-dmg">Урон 60%</span>
             </div>
 
             <div class="field">
@@ -308,9 +300,6 @@
     var cntMaxHint = document.getElementById('count-max-hint');
     var vLevelEl = document.getElementById('variant-level');
     var vDmgEl = document.getElementById('variant-dmg');
-    var vMaxEl = document.getElementById('variant-max');
-    var variantOptions = document.getElementById('variant-options');
-    var cntMaxHint = document.getElementById('count-max-hint');
 
     /* 6 вариантов монстра: [урон%, уровень, макс кол-во] */
     var VARIANTS = [
@@ -450,42 +439,10 @@
       expSel.value = '1';
       cntInput.value = '1';
       currentVariant = 0;
-      buildVariants();
-      selectVariant(0);
+      vLevelEl.textContent = 'Уровень 1';
+      vDmgEl.textContent = 'Урон 60%';
       recalc1();
       updateCityList();
-    }
-
-    function buildVariants() {
-      variantOptions.innerHTML = '';
-      for (var i = 0; i < VARIANTS.length; i++) {
-        var v = VARIANTS[i];
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'variant-btn' + (i === currentVariant ? ' active' : '');
-        btn.textContent = 'Ур. ' + v.lvl + ' · урон ' + v.dmg + '% · макс ' + v.max;
-        btn.setAttribute('data-v', String(i));
-        btn.addEventListener('click', (function (idx) { return function () { selectVariant(idx); }; }(i)));
-        variantOptions.appendChild(btn);
-      }
-    }
-
-    function selectVariant(idx) {
-      if (idx < 0 || idx >= VARIANTS.length) return;
-      currentVariant = idx;
-      var btns = variantOptions.querySelectorAll('.variant-btn');
-      for (var b = 0; b < btns.length; b++) {
-        btns[b].classList.toggle('active', b === idx);
-      }
-      var v = VARIANTS[idx];
-      vLevelEl.textContent = 'Уровень ' + v.lvl;
-      vDmgEl.textContent = 'Урон ' + v.dmg + '%';
-      vMaxEl.textContent = 'Макс. кол-во ' + v.max;
-      var maxQty = v.max;
-      var qty = clampInt(cntInput.value, 1, maxQty, 1);
-      cntInput.value = String(qty);
-      cntMaxHint.textContent = 'макс. ' + maxQty;
-      recalc1();
     }
 
     function recalc1() {
@@ -496,7 +453,7 @@
         rowLoot.hidden = true;
         return;
       }
-      var v = VARIANTS[currentVariant];
+      var v = VARIANTS[0];
       var level = (current.min != null) ? clampInt(v.lvl, current.min, current.max, current.min) : 1;
       var expPct = parseFloat(expSel.value);
       var dmgPct = v.dmg;
@@ -618,8 +575,8 @@
       mInput.value = '';
       closeList();
       currentVariant = 0;
-      buildVariants();
-      selectVariant(0);
+      vLevelEl.textContent = 'Уровень 1';
+      vDmgEl.textContent = 'Урон 60%';
       cntInput.value = '1';
       expSel.value = '1';
       recalc1();
@@ -723,8 +680,8 @@
 
     /* ——— Инициализация ——— */
     currentVariant = 0;
-    buildVariants();
-    selectVariant(0);
+    vLevelEl.textContent = 'Уровень 1';
+    vDmgEl.textContent = 'Урон 60%';
     recalc1(); updateCityList();
     recalc2();
   </script>
