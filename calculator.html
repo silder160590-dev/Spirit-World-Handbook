@@ -85,8 +85,14 @@
                   <option value="0.5">50%</option>
                 </select>
               </div>
-              <span class="summary-label" id="variant-level">Уровень 1</span>
-              <span class="summary-label" id="variant-dmg">Урон 60%</span>
+              <div class="sum-cell">
+                <span class="sum-name">Уровень</span>
+                <span class="sum-value" id="variant-level">1</span>
+              </div>
+              <div class="sum-cell">
+                <span class="sum-name">Урон</span>
+                <span class="sum-value" id="variant-dmg">60%</span>
+              </div>
             </div>
 
             <div class="field">
@@ -444,8 +450,8 @@
       cntInput.value = '1';
       currentVariant = v;
       var vv = VARIANTS[v];
-      vLevelEl.textContent = 'Уровень ' + vv.lvl;
-      vDmgEl.textContent = 'Урон ' + vv.dmg + '%';
+      vLevelEl.textContent = String(vv.lvl);
+      vDmgEl.textContent = vv.dmg + '%';
       recalc1();
       updateCityList();
     }
@@ -581,8 +587,8 @@
       mInput.value = '';
       closeList();
       currentVariant = 0;
-      vLevelEl.textContent = 'Уровень 1';
-      vDmgEl.textContent = 'Урон 60%';
+      vLevelEl.textContent = '1';
+      vDmgEl.textContent = '60%';
       cntInput.value = '1';
       expSel.value = '1';
       recalc1();
@@ -686,8 +692,8 @@
 
     /* ——— Инициализация ——— */
     currentVariant = 0;
-    vLevelEl.textContent = 'Уровень 1';
-    vDmgEl.textContent = 'Урон 60%';
+    vLevelEl.textContent = '1';
+    vDmgEl.textContent = '60%';
     recalc1(); updateCityList();
     recalc2();
   </script>
