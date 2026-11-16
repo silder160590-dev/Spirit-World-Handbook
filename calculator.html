@@ -78,7 +78,7 @@
 
             <div class="field">
               <label>Вариант монстра</label>
-              <div class="variant-select" id="variant-select" role="group"></div>
+              <select id="variant-select"></select>
               <div class="variant-info" id="variant-info">
                 <span class="v-level">Уровень 1</span>
                 <span class="v-dmg">Урон 10%</span>
@@ -458,13 +458,10 @@
       variantSelect.innerHTML = '';
       for (var i = 0; i < VARIANTS.length; i++) {
         var v = VARIANTS[i];
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'variant-btn' + (i === currentVariant ? ' active' : '');
-        btn.textContent = 'Ур. ' + v.lvl + ' · урон ' + v.dmg + '% · макс ' + v.max;
-        btn.setAttribute('data-i', String(i));
-        btn.addEventListener('click', (function (idx) { return function () { selectVariant(idx); }; }(i)));
-        variantSelect.appendChild(btn);
+        var o = document.createElement('option');
+        o.value = String(i);
+        o.textContent = 'Ур. ' + v.lvl + ' · урон ' + v.dmg + '% · макс ' + v.max;
+        variantSelect.appendChild(o);
       }
       updateVariantInfo();
     }
@@ -472,10 +469,7 @@
     function selectVariant(idx) {
       if (idx < 0 || idx >= VARIANTS.length) return;
       currentVariant = idx;
-      var btns = variantSelect.querySelectorAll('.variant-btn');
-      for (var b = 0; b < btns.length; b++) {
-        btns[b].classList.toggle('active', b === idx);
-      }
+      variantSelect.value = String(idx);
       updateVariantInfo();
       /* сбросить количество в limites варианта и пересчитать */
       var maxQty = VARIANTS[idx].max;
@@ -595,6 +589,9 @@
       if (!e.target.closest('.combo')) closeList();
     });
 
+    variantSelect.addEventListener('change', function () {
+      selectVariant(parseInt(variantSelect.value, 10));
+    });
     expSel.addEventListener('change', recalc1);
     cntInput.addEventListener('input', function () {
       var maxQty = VARIANTS[currentVariant].max;
