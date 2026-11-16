@@ -77,10 +77,13 @@
             </div>
 
             <div class="field">
-              <label for="level-select">Уровень</label>
-              <select id="level-select" disabled>
-                <option value="">— сначала выберите монстра —</option>
-              </select>
+              <label>Вариант монстра</label>
+              <div class="variant-select" id="variant-select" role="group"></div>
+              <div class="variant-info" id="variant-info">
+                <span class="v-level">Уровень 1</span>
+                <span class="v-dmg">Урон 10%</span>
+                <span class="v-max">Макс. кол-во 7</span>
+              </div>
             </div>
 
             <div class="field">
@@ -93,24 +96,13 @@
             </div>
 
             <div class="field">
-              <label for="dmg-select">Процент урона</label>
-              <select id="dmg-select">
-                <option value="10" selected>10%</option>
-                <option value="20">20%</option>
-                <option value="30">30%</option>
-                <option value="40">40%</option>
-                <option value="50">50%</option>
-                <option value="60">60%</option>
-              </select>
-            </div>
-
-            <div class="field">
               <label for="count-input">Количество</label>
               <div class="stepper">
                 <button type="button" id="count-minus" aria-label="Уменьшить количество">−</button>
                 <input type="number" id="count-input" inputmode="numeric" min="1" step="1" value="1" aria-label="Количество">
                 <button type="button" id="count-plus" aria-label="Увеличить количество">+</button>
               </div>
+              <span id="count-max-hint"></span>
             </div>
 
             <div class="field-clear">
@@ -311,10 +303,25 @@
     /* ——— Калькулятор 1: опыт, урон и лут ——— */
     var mInput = document.getElementById('monster-input');
     var mList = document.getElementById('monster-list');
-    var lvlSel = document.getElementById('level-select');
     var expSel = document.getElementById('exp-select');
-    var dmgSel = document.getElementById('dmg-select');
     var cntInput = document.getElementById('count-input');
+    var cntMaxHint = document.getElementById('count-max-hint');
+
+    /* 6 вариантов монстра: [урон%, уровень, макс кол-во] */
+    var VARIANTS = [
+      { dmg: 60, lvl: 1, max: 7 },
+      { dmg: 50, lvl: 1, max: 8 },
+      { dmg: 40, lvl: 2, max: 9 },
+      { dmg: 30, lvl: 2, max: 10 },
+      { dmg: 20, lvl: 3, max: 11 },
+      { dmg: 10, lvl: 3, max: 12 }
+    ];
+    var currentVariant = 0;   // индекс выбранного варианта
+    var variantSelect = document.getElementById('variant-select');
+    var variantInfo = document.getElementById('variant-info');
+    var vLevel = document.querySelector('.v-level');
+    var vDmg = document.querySelector('.v-dmg');
+    var vMax = document.querySelector('.v-max');
     var cntMinus = document.getElementById('count-minus');
     var cntPlus = document.getElementById('count-plus');
     var rowExp = document.getElementById('row-exp');
@@ -346,14 +353,15 @@
 
     function search(q) {
       var nq = norm(q.trim());
-      if (!nq) return [];
+      if (!nq) return { hits: [], more: false };
       var starts = [], incl = [];
       for (var i = 0; i < MONSTERS.length; i++) {
         var nn = norm(MONSTERS[i].n);
         if (nn.indexOf(nq) === 0) starts.push(i);
         else if (nn.indexOf(nq) !== -1) incl.push(i);
       }
-      return starts.concat(incl).slice(0, 12);
+      var all = starts.concat(incl);
+      return { hits: all.slice(0, 1), more: all.length > 1 };
     }
 
     function lvlLabel(m) {
@@ -408,7 +416,8 @@
 
     function renderList() {
       var q = mInput.value;
-      var hits = search(q);
+      var res = search(q);
+      var hits = res.hits;
       activeIdx = -1;
       if (!q.trim()) { mList.innerHTML = ''; closeList(); return; }
       if (hits.length === 0) {
@@ -416,13 +425,13 @@
         mList.classList.add('open');
         return;
       }
-      var html = '';
-      for (var k = 0; k < hits.length; k++) {
-        var m = MONSTERS[hits[k]];
-        html += '<div class="combo-item' + (m.min == null ? ' none-lvl' : '') + '" data-i="' + hits[k] + '" role="option">' +
-          '<span>' + markMatch(m.n, q) + '</span>' +
-          '<span class="lvl">' + lvlLabel(m) + '</span>' +
-          '<span class="combo-el">' + elementChipsHtml(m.el) + '</span></div>';
+      var m = MONSTERS[hits[0]];
+      var html = '<div class="combo-item' + (m.min == null ? ' none-lvl' : '') + '" data-i="' + hits[0] + '" role="option">' +
+        '<span>' + markMatch(m.n, q) + '</span>' +
+        '<span class="lvl">' + lvlLabel(m) + '</span>' +
+        '<span class="combo-el">' + elementChipsHtml(m.el) + '</span></div>';
+      if (res.more) {
+        html += '<div class="combo-empty">Хочешь другой — пиши больше букв имени</div>';
       }
       mList.innerHTML = html;
       mList.classList.add('open');
@@ -437,29 +446,50 @@
       mInput.value = m.n;
       closeList();
       expSel.value = '1';
-      dmgSel.value = '10';
       cntInput.value = '1';
-      buildLevelOptions();
+      currentVariant = 0;
+      buildVariants();
+      selectVariant(0);
       recalc1();
       updateCityList();
     }
 
-    function buildLevelOptions() {
-      lvlSel.innerHTML = '';
-      if (current == null || current.min == null) {
-        lvlSel.disabled = true;
-        lvlSel.innerHTML = '<option value="">' + (current ? 'уровни не указаны' : '— сначала выберите монстра —') + '</option>';
-        lvlSel.value = '';
-        return;
+    function buildVariants() {
+      variantSelect.innerHTML = '';
+      for (var i = 0; i < VARIANTS.length; i++) {
+        var v = VARIANTS[i];
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'variant-btn' + (i === currentVariant ? ' active' : '');
+        btn.textContent = 'Ур. ' + v.lvl + ' · урон ' + v.dmg + '% · макс ' + v.max;
+        btn.setAttribute('data-i', String(i));
+        btn.addEventListener('click', (function (idx) { return function () { selectVariant(idx); }; }(i)));
+        variantSelect.appendChild(btn);
       }
-      lvlSel.disabled = false;
-      for (var l = current.min; l <= current.max; l++) {
-        var o = document.createElement('option');
-        o.value = String(l);
-        o.textContent = l + ' ур.';
-        lvlSel.appendChild(o);
+      updateVariantInfo();
+    }
+
+    function selectVariant(idx) {
+      if (idx < 0 || idx >= VARIANTS.length) return;
+      currentVariant = idx;
+      var btns = variantSelect.querySelectorAll('.variant-btn');
+      for (var b = 0; b < btns.length; b++) {
+        btns[b].classList.toggle('active', b === idx);
       }
-      lvlSel.value = String(current.min);
+      updateVariantInfo();
+      /* сбросить количество в limites варианта и пересчитать */
+      var maxQty = VARIANTS[idx].max;
+      var qty = clampInt(cntInput.value, 1, maxQty, 1);
+      cntInput.value = String(qty);
+      cntMaxHint.textContent = 'макс. ' + maxQty;
+      recalc1();
+    }
+
+    function updateVariantInfo() {
+      var v = VARIANTS[currentVariant];
+      vLevel.textContent = 'Уровень ' + v.lvl;
+      vDmg.textContent = 'Урон ' + v.dmg + '%';
+      vMax.textContent = 'Макс. кол-во ' + v.max;
     }
 
     function recalc1() {
@@ -470,10 +500,14 @@
         rowLoot.hidden = true;
         return;
       }
-      var level = (current.min != null) ? clampInt(lvlSel.value, current.min, current.max, current.min) : 1;
+      var v = VARIANTS[currentVariant];
+      var level = (current.min != null) ? clampInt(v.lvl, current.min, current.max, current.min) : 1;
       var expPct = parseFloat(expSel.value);
-      var dmgPct = parseInt(dmgSel.value, 10);
-      var qty = clampInt(cntInput.value, 1, 999, 1);
+      var dmgPct = v.dmg;
+      var maxQty = v.max;
+      var qty = clampInt(cntInput.value, 1, maxQty, 1);
+      cntInput.value = String(qty);
+      cntMaxHint.textContent = 'макс. ' + maxQty;
 
       var expOne = level * 100 * expPct;
       var expAll = expOne * qty;
@@ -561,27 +595,37 @@
       if (!e.target.closest('.combo')) closeList();
     });
 
-    lvlSel.addEventListener('change', recalc1);
     expSel.addEventListener('change', recalc1);
-    dmgSel.addEventListener('change', recalc1);
-    cntInput.addEventListener('input', recalc1);
+    cntInput.addEventListener('input', function () {
+      var maxQty = VARIANTS[currentVariant].max;
+      cntInput.value = String(clampInt(cntInput.value, 1, maxQty, 1));
+      recalc1();
+    });
 
     function setCount(v) {
-      cntInput.value = String(clampInt(v, 1, 999, 1)); updateCityList();
+      var maxQty = VARIANTS[currentVariant].max;
+      cntInput.value = String(clampInt(v, 1, maxQty, 1)); updateCityList();
       recalc1();
     }
 
-    cntMinus.addEventListener('click', function () { setCount(clampInt(cntInput.value, 1, 999, 1) - 1); });
-    cntPlus.addEventListener('click', function () { setCount(clampInt(cntInput.value, 1, 999, 1) + 1); });
+    cntMinus.addEventListener('click', function () {
+      var maxQty = VARIANTS[currentVariant].max;
+      setCount(clampInt(cntInput.value, 1, maxQty, 1) - 1);
+    });
+    cntPlus.addEventListener('click', function () {
+      var maxQty = VARIANTS[currentVariant].max;
+      setCount(clampInt(cntInput.value, 1, maxQty, 1) + 1);
+    });
 
     mClear.addEventListener('click', function () {
       current = null;
       mInput.value = '';
       closeList();
-      buildLevelOptions();
+      currentVariant = 0;
+      buildVariants();
+      selectVariant(0);
       cntInput.value = '1';
       expSel.value = '1';
-      dmgSel.value = '10';
       recalc1();
       updateCityList();
       mInput.focus();
@@ -682,7 +726,9 @@
     }
 
     /* ——— Инициализация ——— */
-    buildLevelOptions();
+    currentVariant = 0;
+    buildVariants();
+    selectVariant(0);
     recalc1(); updateCityList();
     recalc2();
   </script>
