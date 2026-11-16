@@ -426,10 +426,12 @@
         return;
       }
       var m = MONSTERS[hits[0]];
+      var v0 = VARIANTS[0];
       var html = '<div class="combo-item' + (m.min == null ? ' none-lvl' : '') + '" data-i="' + hits[0] + '" role="option">' +
         '<span>' + markMatch(m.n, q) + '</span>' +
         '<span class="lvl">' + lvlLabel(m) + '</span>' +
-        '<span class="combo-el">' + elementChipsHtml(m.el) + '</span></div>';
+        '<span class="combo-el">' + elementChipsHtml(m.el) + '</span>' +
+        '<span class="combo-variant">· Ур. ' + v0.lvl + ' · урон ' + v0.dmg + '% · макс ' + v0.max + '</span></div>';
       if (res.more) {
         html += '<div class="combo-empty">Хочешь другой — пиши больше букв имени</div>';
       }
