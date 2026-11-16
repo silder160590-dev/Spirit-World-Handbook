@@ -76,9 +76,14 @@
               </div>
             </div>
 
-            <div class="field variant-row">
+            <div class="field variant-select">
+              <div class="variant-options" id="variant-options"></div>
+            </div>
+
+            <div class="field variant-labels">
               <span class="variant-label" id="variant-level">Уровень 1</span>
               <span class="variant-label" id="variant-dmg">Урон 60%</span>
+              <span class="variant-label" id="variant-max">Макс. кол-во 7</span>
             </div>
 
             <div class="field">
@@ -300,8 +305,11 @@
     var mList = document.getElementById('monster-list');
     var expSel = document.getElementById('exp-select');
     var cntInput = document.getElementById('count-input');
+    var cntMaxHint = document.getElementById('count-max-hint');
     var vLevelEl = document.getElementById('variant-level');
     var vDmgEl = document.getElementById('variant-dmg');
+    var vMaxEl = document.getElementById('variant-max');
+    var variantOptions = document.getElementById('variant-options');
     var cntMaxHint = document.getElementById('count-max-hint');
 
     /* 6 вариантов монстра: [урон%, уровень, макс кол-во] */
@@ -442,15 +450,42 @@
       expSel.value = '1';
       cntInput.value = '1';
       currentVariant = 0;
-      updateVariantLabels();
+      buildVariants();
+      selectVariant(0);
       recalc1();
       updateCityList();
     }
 
-    function updateVariantLabels() {
-      var v = VARIANTS[currentVariant];
+    function buildVariants() {
+      variantOptions.innerHTML = '';
+      for (var i = 0; i < VARIANTS.length; i++) {
+        var v = VARIANTS[i];
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'variant-btn' + (i === currentVariant ? ' active' : '');
+        btn.textContent = 'Ур. ' + v.lvl + ' · урон ' + v.dmg + '% · макс ' + v.max;
+        btn.setAttribute('data-v', String(i));
+        btn.addEventListener('click', (function (idx) { return function () { selectVariant(idx); }; }(i)));
+        variantOptions.appendChild(btn);
+      }
+    }
+
+    function selectVariant(idx) {
+      if (idx < 0 || idx >= VARIANTS.length) return;
+      currentVariant = idx;
+      var btns = variantOptions.querySelectorAll('.variant-btn');
+      for (var b = 0; b < btns.length; b++) {
+        btns[b].classList.toggle('active', b === idx);
+      }
+      var v = VARIANTS[idx];
       vLevelEl.textContent = 'Уровень ' + v.lvl;
       vDmgEl.textContent = 'Урон ' + v.dmg + '%';
+      vMaxEl.textContent = 'Макс. кол-во ' + v.max;
+      var maxQty = v.max;
+      var qty = clampInt(cntInput.value, 1, maxQty, 1);
+      cntInput.value = String(qty);
+      cntMaxHint.textContent = 'макс. ' + maxQty;
+      recalc1();
     }
 
     function recalc1() {
@@ -583,7 +618,8 @@
       mInput.value = '';
       closeList();
       currentVariant = 0;
-      updateVariantLabels();
+      buildVariants();
+      selectVariant(0);
       cntInput.value = '1';
       expSel.value = '1';
       recalc1();
@@ -687,7 +723,8 @@
 
     /* ——— Инициализация ——— */
     currentVariant = 0;
-    updateVariantLabels();
+    buildVariants();
+    selectVariant(0);
     recalc1(); updateCityList();
     recalc2();
   </script>

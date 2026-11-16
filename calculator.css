@@ -157,10 +157,40 @@
       box-shadow: 0 1px 3px rgba(58, 44, 30, 0.18);
     }
 
-    .variant-row {
+    .variant-select {
+      margin-top: 8px;
+    }
+    .variant-options {
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .variant-btn {
+      flex: none;
+      font-family: var(--serif);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--ink-300);
+      background: var(--paper-50);
+      border: 1px solid var(--paper-300);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .variant-btn:hover { color: var(--ink-500); border-color: var(--paper-400); }
+    .variant-btn.active {
+      background: var(--paper-0);
+      color: var(--gold-700);
+      border-color: var(--gold-500);
+      box-shadow: 0 1px 3px rgba(58, 44, 30, 0.18);
+    }
+    .variant-labels {
       display: flex;
       gap: 16px;
-      margin-top: 4px;
+      margin-top: 6px;
     }
     .variant-label {
       font-family: var(--serif);
