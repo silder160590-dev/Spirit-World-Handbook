@@ -69,20 +69,25 @@
         <div class="calc-card">
           <div class="fields">
             <div class="field field-monster">
-              <label for="monster-input">Монстр</label>
               <div class="monster-row">
-                <div class="combo">
-                  <input type="text" id="monster-input" autocomplete="off" spellcheck="false" placeholder="Начните вводить имя…">
-                  <div class="combo-list" id="monster-list" role="listbox" aria-label="Варианты монстров"></div>
+                <div class="m-name-field">
+                  <label for="monster-input">Монстр</label>
+                  <div class="combo">
+                    <input type="text" id="monster-input" autocomplete="off" spellcheck="false" placeholder="Начните вводить имя…">
+                    <div class="combo-list" id="monster-list" role="listbox" aria-label="Варианты монстров"></div>
+                  </div>
                 </div>
-                <select id="variant-select" aria-label="Вариант монстра">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                </select>
+                <div class="m-var-field">
+                  <label for="variant-select">Вариант</label>
+                  <select id="variant-select" aria-label="Вариант монстра">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                  </select>
+                </div>
               </div>
             </div>
 
