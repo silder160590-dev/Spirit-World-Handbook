@@ -273,12 +273,13 @@
       margin: 0 0 6px;
     }
     .monster-row .m-name-field {
-      flex: 1 1 0;
+      flex: 0 0 calc(80% - 6px);
+      max-width: calc(80% - 6px);
       min-width: 0;
     }
     .monster-row .m-var-field {
-      flex: 0 0 20%;
-      max-width: 20%;
+      flex: 0 0 calc(20% - 6px);
+      max-width: calc(20% - 6px);
     }
     .monster-row .combo {
       width: 100%;
