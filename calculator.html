@@ -368,8 +368,7 @@
         if (nn.indexOf(nq) === 0) starts.push(i);
         else if (nn.indexOf(nq) !== -1) incl.push(i);
       }
-      var all = starts.concat(incl);
-      return { hits: all.slice(0, 1), more: all.length > 1 };
+      return { hits: starts.concat(incl), more: false };
     }
 
     function lvlLabel(m) {
@@ -448,13 +447,13 @@
         mList.classList.add('open');
         return;
       }
-      var m = MONSTERS[hits[0]];
-      var html = '<div class="combo-item" data-i="' + hits[0] + '" role="option">' +
-        '<span>' + markMatch(m.n, q) + '</span>' +
-        '<span class="lvl">' + lvlLabel(m) + '</span>' +
-        '<span class="combo-el">' + elementChipsHtml(m.el) + '</span></div>';
-      if (res.more) {
-        html += '<div class="combo-empty">Хочешь другой — пиши больше букв имени</div>';
+      var html = '';
+      for (var k = 0; k < hits.length; k++) {
+        var m = MONSTERS[hits[k]];
+        html += '<div class="combo-item" data-i="' + hits[k] + '" role="option">' +
+          '<span>' + markMatch(m.n, q) + '</span>' +
+          '<span class="lvl">' + lvlLabel(m) + '</span>' +
+          '<span class="combo-el">' + elementChipsHtml(m.el) + '</span></div>';
       }
       mList.innerHTML = html;
       mList.classList.add('open');
