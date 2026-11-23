@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./calculator.css?v=3">
+  <link rel="stylesheet" href="./calculator.css?v=4">
   <script src="./monsters-data.js?v=2"></script>
   <script src="./recipes-data.js"></script>
   <script src="./items-data.js"></script>
@@ -141,7 +141,7 @@
               <div class="result-row" id="row-life">
                 <span class="r-label">Жизнь</span>
                 <span class="r-value" id="life-value" aria-live="polite"></span>
-                <span class="r-formula" id="life-formula"></span>
+                <span class="r-formula" id="life-formula" hidden></span>
               </div>
             </div>
             <div class="monster-result-pair" id="exp-details-grid" hidden>
@@ -581,12 +581,10 @@
         ' = ' + fmtInt(lifeOne) + ' Х за одного';
 
       expValue.textContent = fmtInt(expOne) + (qty > 1 ? ' × ' + qty + ' = ' + fmtInt(expAll) : '');
-      expFormula.textContent = current.n + ', ' + level + ' ур., опыт ' + Math.round(expPct * 100) + '%' +
-        (qty > 1 ? ', ' + qty + ' шт.' : '') + ' → ' + fmtInt(expOne) + ' за одного, всего ' + fmtInt(expAll);
+      expFormula.textContent = level + ' ур., опыт ' + Math.round(expPct * 100) + '%';
 
       dmgValue.textContent = fmtInt(dmgOne) + (qty > 1 ? ' × ' + qty + ' = ' + fmtInt(dmgAll) : '');
-      dmgFormula.textContent = current.n + ', ' + level + ' ур., урон ' + dmgPct + '%' +
-        (qty > 1 ? ', ' + qty + ' шт.' : '') + ' → ' + fmtInt(dmgOne) + ' за одного, всего ' + fmtInt(dmgAll);
+      dmgFormula.textContent = level + ' ур., урон ' + dmgPct + '%';
 
       /* Лут: «имя N/M» — N = кол-во монстров (стаков), M = размер стака из бестиария */
       var loot = current.loot || [];
