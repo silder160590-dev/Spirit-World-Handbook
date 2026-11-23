@@ -10,8 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./calculator.css?v=2">
-  <script src="./monsters-data.js"></script>
+  <link rel="stylesheet" href="./calculator.css?v=3">
+  <script src="./monsters-data.js?v=2"></script>
   <script src="./recipes-data.js"></script>
   <script src="./items-data.js"></script>
 </head>
@@ -128,19 +128,43 @@
           </div>
 
           <div class="results" id="monster-results">
-            <div class="result-row" id="row-element" hidden>
-              <span class="r-label">Стихия</span>
-              <span class="r-value" id="element-value"></span>
+            <div class="monster-result-pair" id="element-life-grid" hidden>
+              <div class="result-row" id="row-element" hidden>
+                <span class="r-label" id="element-label">Стихия</span>
+                <span class="r-value" id="element-value"></span>
+                <div class="switch" id="element-switch" role="group" aria-labelledby="element-label" hidden>
+                  <button type="button" class="switch-btn active" data-adjustment="0" aria-pressed="true">0%</button>
+                  <button type="button" class="switch-btn" data-adjustment="20" aria-pressed="false">+20%</button>
+                  <button type="button" class="switch-btn" data-adjustment="-20" aria-pressed="false">-20%</button>
+                </div>
+              </div>
+              <div class="result-row" id="row-life">
+                <span class="r-label">Жизнь</span>
+                <span class="r-value" id="life-value" aria-live="polite"></span>
+                <span class="r-formula" id="life-formula"></span>
+              </div>
             </div>
-            <div class="result-row" id="row-exp" hidden>
-              <span class="r-label">Опыт</span>
-              <span class="r-value" id="exp-value">—</span>
-              <span class="r-formula" id="exp-formula"></span>
+            <div class="monster-result-pair" id="exp-details-grid" hidden>
+              <div class="result-row" id="row-exp" hidden>
+                <span class="r-label">Опыт</span>
+                <span class="r-value" id="exp-value">—</span>
+                <span class="r-formula" id="exp-formula"></span>
+              </div>
+              <div class="result-row monster-info" id="row-details" hidden>
+                <span class="r-label">Дополнительные детали</span>
+                <span class="r-value-text" id="details-value"></span>
+              </div>
             </div>
-            <div class="result-row total" id="row-dmg" hidden>
-              <span class="r-label">Урон</span>
-              <span class="r-value" id="dmg-value">—</span>
-              <span class="r-formula" id="dmg-formula"></span>
+            <div class="monster-result-pair" id="dmg-skills-grid" hidden>
+              <div class="result-row total" id="row-dmg" hidden>
+                <span class="r-label">Урон</span>
+                <span class="r-value" id="dmg-value">—</span>
+                <span class="r-formula" id="dmg-formula"></span>
+              </div>
+              <div class="result-row monster-info" id="row-skills" hidden>
+                <span class="r-label">Специальные навыки</span>
+                <span class="r-value-text" id="skills-value"></span>
+              </div>
             </div>
             <div class="results-grid" id="loot-city-grid">
               <div class="result-row" id="row-loot" hidden>
@@ -351,6 +375,18 @@
     var mClear = document.getElementById('monster-clear');
     var rowElement = document.getElementById('row-element');
     var elementValue = document.getElementById('element-value');
+    var elementLifeGrid = document.getElementById('element-life-grid');
+    var expDetailsGrid = document.getElementById('exp-details-grid');
+    var dmgSkillsGrid = document.getElementById('dmg-skills-grid');
+    var elementSwitch = document.getElementById('element-switch');
+    var elementButtons = elementSwitch.querySelectorAll('.switch-btn');
+    var elementAdjustment = 0;
+    var lifeValue = document.getElementById('life-value');
+    var lifeFormula = document.getElementById('life-formula');
+    var rowDetails = document.getElementById('row-details');
+    var detailsValue = document.getElementById('details-value');
+    var rowSkills = document.getElementById('row-skills');
+    var skillsValue = document.getElementById('skills-value');
 
     var current = null;   // выбранный монстр {n, min, max, loot}
     var activeIdx = -1;   // подсвеченный пункт списка подсказок
@@ -423,7 +459,8 @@
         escapeHtml(el) + '</span>';
     }
 
-    function elementChipsHtml(els) {
+    function elementChipsHtml(els, variableElement) {
+      if (variableElement) return elementChip('Переменная стихия');
       if (!els || els.length === 0) {
         var st = DEFAULT_ELEMENT_STYLE;
         return '<span class="element-chip" style="background:' + st.background + ';color:' + st.text + '">— без стихии —</span>';
@@ -482,6 +519,7 @@
       mInput.value = m.n;
       closeList();
       expSel.value = '1';
+      elementAdjustment = 0;
       /* количество не сбрасываем — clamp к максимуму варианта в recalc1 */
       currentVariant = 0;
       variantSel.value = '1';
@@ -491,11 +529,28 @@
     }
 
     function recalc1() {
+      elementLifeGrid.hidden = current == null;
+      expDetailsGrid.hidden = current == null;
+      dmgSkillsGrid.hidden = current == null;
+      detailsValue.textContent = current ? current.details || '' : '';
+      skillsValue.textContent = current ? (current.skills || []).join('\n') : '';
+      rowDetails.hidden = !detailsValue.textContent;
+      rowSkills.hidden = !skillsValue.textContent;
+      var hasElement = current != null && ((current.el || []).length > 0 || current.variableElement === true);
+      elementSwitch.hidden = !hasElement;
+      if (!hasElement) elementAdjustment = 0;
+      for (var b = 0; b < elementButtons.length; b++) {
+        var selected = Number(elementButtons[b].getAttribute('data-adjustment')) === elementAdjustment;
+        elementButtons[b].classList.toggle('active', selected);
+        elementButtons[b].setAttribute('aria-pressed', String(selected));
+      }
       if (current == null) {
         rowElement.hidden = true;
         rowExp.hidden = true;
         rowDmg.hidden = true;
         rowLoot.hidden = true;
+        lifeValue.textContent = '';
+        lifeFormula.textContent = '';
         return;
       }
       var v = VARIANTS[currentVariant];
@@ -512,11 +567,18 @@
       var expAll = expOne * qty;
       var dmgOne = (level * 100 * dmgPct) / 100;
       var dmgAll = dmgOne * qty;
+      var elementCoefficient = (100 + elementAdjustment) / 100;
+      var lifeOne = level * 100 * elementCoefficient;
+      var lifeAll = lifeOne * qty;
 
       rowExp.hidden = false;
       rowDmg.hidden = false;
       rowElement.hidden = false;
-      elementValue.innerHTML = elementChipsHtml(current.el);
+      elementValue.innerHTML = elementChipsHtml(current.el, current.variableElement);
+
+      lifeValue.textContent = fmtInt(lifeOne) + ' Х' + (qty > 1 ? ' × ' + qty + ' = ' + fmtInt(lifeAll) + ' Х' : '');
+      lifeFormula.textContent = '100 × ' + level + ' ур. × ' + String(elementCoefficient).replace('.', ',') +
+        ' = ' + fmtInt(lifeOne) + ' Х за одного';
 
       expValue.textContent = fmtInt(expOne) + (qty > 1 ? ' × ' + qty + ' = ' + fmtInt(expAll) : '');
       expFormula.textContent = current.n + ', ' + level + ' ур., опыт ' + Math.round(expPct * 100) + '%' +
@@ -598,6 +660,14 @@
     });
 
     expSel.addEventListener('change', recalc1);
+    elementSwitch.addEventListener('click', function (e) {
+      var button = e.target.closest('.switch-btn');
+      if (!button || !elementSwitch.contains(button) || elementSwitch.hidden) return;
+      var adjustment = Number(button.getAttribute('data-adjustment'));
+      if (adjustment !== 0 && adjustment !== 20 && adjustment !== -20) return;
+      elementAdjustment = adjustment;
+      recalc1();
+    });
     variantSel.addEventListener('change', function () {
       var n = parseInt(variantSel.value, 10);
       if (n >= 1 && n <= VARIANTS.length) {
@@ -637,6 +707,7 @@
       vDmgEl.textContent = '60%';
       cntInput.value = '1';
       expSel.value = '1';
+      elementAdjustment = 0;
       recalc1();
       updateCityList();
       mInput.focus();
