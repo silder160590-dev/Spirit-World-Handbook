@@ -657,7 +657,6 @@
     #row-exp .r-value,
     #row-dmg .r-value {
       white-space: nowrap;
-      overflow-x: auto;
       text-align: right;
     }
     #row-life {
