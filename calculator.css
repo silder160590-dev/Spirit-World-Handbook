@@ -670,9 +670,6 @@
       overflow-x: auto;
       text-align: right;
     }
-    #exp-value,
-    #dmg-value,
-    #life-value { font-size: 1.25rem; }
 
     @media (max-width: 640px) {
       #row-element { padding: 4px; gap: 3px; }
