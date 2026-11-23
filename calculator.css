@@ -395,6 +395,7 @@
       align-items: flex-end;
       justify-content: center;
     }
+    #monster-clear { transform: translateY(-1.6rem); }
 
     /* ——— Результаты ——— */
     .results { margin-top: 22px; display: grid; gap: 14px; }
