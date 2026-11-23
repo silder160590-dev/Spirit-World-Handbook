@@ -613,7 +613,6 @@
     }
     #row-element .r-label {
       flex: none;
-      font-size: 0.75rem;
       white-space: nowrap;
     }
     #element-value {
@@ -623,7 +622,6 @@
     }
     #element-value .element-chip-stripes { flex-wrap: nowrap; }
     #element-value .element-chip {
-      font-size: 0.75rem;
       padding: 3px 5px;
       white-space: nowrap;
       line-height: 1.2;
@@ -637,7 +635,7 @@
     #element-switch .switch-btn {
       flex: none;
       padding: 4px 3px;
-      font-size: 0.75rem;
+      font-size: 0.9rem;
       white-space: nowrap;
     }
     #element-switch .switch-btn:focus-visible {
@@ -655,13 +653,8 @@
       gap: 3px;
       padding: 8px 10px;
     }
-    #row-exp .r-label,
-    #row-dmg .r-label { font-size: 0.85rem; }
     #row-exp .r-value,
     #row-dmg .r-value {
-      font-family: var(--serif);
-      font-size: 0.95rem;
-      line-height: 1.3;
       white-space: nowrap;
       overflow-x: auto;
       text-align: right;
@@ -672,11 +665,7 @@
       gap: 4px;
       padding: 8px;
     }
-    #row-life .r-label { font-size: 0.8rem; }
     #row-life .r-value {
-      font-family: var(--serif);
-      font-size: 0.85rem;
-      line-height: 1.3;
       white-space: nowrap;
       overflow-x: auto;
       text-align: right;
@@ -684,15 +673,8 @@
 
     @media (max-width: 640px) {
       #row-element { padding: 4px; gap: 3px; }
-      #row-element .r-label,
-      #element-value .element-chip,
-      #element-switch .switch-btn { font-size: 0.625rem; }
       #element-value .element-chip { padding: 2px 3px; }
       #element-switch .switch-btn { padding: 4px 1px; }
-      #row-exp .r-value,
-      #row-dmg .r-value { font-size: 0.9rem; }
-      #row-life .r-label { font-size: 0.7rem; }
-      #row-life .r-value { font-size: 0.7rem; }
       .monster-result-pair { grid-template-columns: minmax(0, 1fr); }
       .results-grid { grid-template-columns: 1fr; }
       .fields { grid-template-columns: 1fr; }
