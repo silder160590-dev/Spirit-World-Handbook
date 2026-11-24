@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./calculator.css?v=6">
+  <link rel="stylesheet" href="./calculator.css?v=7">
   <script src="./monsters-data.js?v=2"></script>
   <script src="./recipes-data.js"></script>
   <script src="./items-data.js"></script>
@@ -95,23 +95,13 @@
 
             <div class="monster-controls">
               <div class="monster-controls-fields">
-                <div class="field field-summary">
-                  <div class="exp-wrap">
-                    <label for="exp-select">Опыт</label>
-                    <select id="exp-select">
-                      <option value="1" selected>100%</option>
-                      <option value="0.75">75%</option>
-                      <option value="0.5">50%</option>
-                    </select>
-                  </div>
-                  <div class="sum-cell">
-                    <span class="sum-name">Уровень</span>
-                    <span class="sum-value" id="variant-level">1</span>
-                  </div>
-                  <div class="sum-cell">
-                    <span class="sum-name">Урон</span>
-                    <span class="sum-value" id="variant-dmg">60%</span>
-                  </div>
+                <div class="field exp-wrap">
+                  <label for="exp-select">Опыт</label>
+                  <select id="exp-select">
+                    <option value="1" selected>100%</option>
+                    <option value="0.75">75%</option>
+                    <option value="0.5">50%</option>
+                  </select>
                 </div>
 
                 <div class="field">
@@ -123,7 +113,17 @@
                   </div>
                   <span id="count-max-hint"></span>
                 </div>
+              </div>
 
+              <div class="monster-stats">
+                <div class="sum-cell">
+                  <span class="sum-name">Уровень</span>
+                  <span class="sum-value" id="variant-level">1</span>
+                </div>
+                <div class="sum-cell">
+                  <span class="sum-name">Урон</span>
+                  <span class="sum-value" id="variant-dmg">60%</span>
+                </div>
                 <div class="field-clear">
                   <button type="button" class="btn-clear" id="monster-clear">Очистить</button>
                 </div>

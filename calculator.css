@@ -398,25 +398,23 @@
     .monster-controls {
       grid-column: 1 / -1;
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
       gap: 14px;
       align-items: start;
     }
-    .monster-controls-fields {
+    .monster-controls-fields,
+    .monster-stats {
       display: grid;
       gap: 12px;
       min-width: 0;
     }
-    .monster-controls .field-summary {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-    }
     .monster-controls .exp-wrap { min-width: 0; max-width: none; }
     .monster-controls .sum-value { padding-inline: 0; }
+    .monster-stats .sum-name { overflow-wrap: anywhere; }
     .monster-controls .stepper { gap: 6px; }
     .monster-controls .stepper input { min-width: 0; padding-inline: 4px; }
     .monster-controls .field-clear { justify-content: flex-start; }
+    .monster-stats .btn-clear { width: 100%; padding-inline: 4px; overflow-wrap: anywhere; }
     .element-reference {
       width: 100%;
       table-layout: fixed;
@@ -715,22 +713,18 @@
     }
 
     @media (max-width: 640px) {
-      .monster-controls { gap: 10px; }
-      .monster-controls .field-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .monster-controls .exp-wrap { grid-column: 1 / -1; }
-      .monster-controls .sum-name,
-      .monster-controls .field > label,
-      .monster-controls .exp-wrap > label {
-        font-size: 0.75rem;
+      .monster-controls { gap: 8px; }
+      .monster-stats .sum-name {
+        font-size: 0.65rem;
         letter-spacing: 0;
       }
       .monster-controls .sum-value { padding: 4px 0; }
       .monster-controls .stepper button { width: 26px; }
       .monster-controls .stepper { gap: 4px; }
-      .monster-controls .btn-clear { width: 100%; padding: 9px 4px; font-size: 0.85rem; }
-      .element-reference { font-size: 0.8rem; }
-      .element-reference caption { font-size: 0.75rem; }
-      .element-reference td { padding: 6px; }
+      .monster-stats .btn-clear { padding: 9px 2px; font-size: 0.65rem; }
+      .element-reference { font-size: 0.75rem; }
+      .element-reference caption { font-size: 0.65rem; }
+      .element-reference td { padding: 6px 4px; }
       #row-element { padding: 4px; gap: 3px; }
       #element-value .element-chip { padding: 2px 3px; }
       #element-switch .switch-btn { padding: 4px 1px; }
@@ -755,12 +749,8 @@
     }
 
     @media (max-width: 360px) {
-      .monster-controls .field-summary { grid-template-columns: minmax(0, 1fr); }
-      .monster-controls .sum-cell {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        gap: 4px;
+      .monster-controls-fields .field > label {
+        font-size: 0.75rem;
+        letter-spacing: 0;
       }
-      .monster-controls .sum-name { margin-bottom: 0; }
     }
