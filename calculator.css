@@ -410,7 +410,17 @@
     }
     .monster-controls .exp-wrap { min-width: 0; max-width: none; }
     .monster-controls .sum-value { padding-inline: 0; }
-    .monster-stats .sum-name { overflow-wrap: anywhere; }
+    .monster-stats .sum-cell {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .monster-stats .sum-name {
+      margin-bottom: 0;
+      text-transform: none;
+      letter-spacing: 0;
+    }
     .monster-controls .stepper { gap: 6px; }
     .monster-controls .stepper input { min-width: 0; padding-inline: 4px; }
     .monster-controls .field-clear { justify-content: flex-start; }
@@ -719,6 +729,7 @@
         letter-spacing: 0;
       }
       .monster-controls .sum-value { padding: 4px 0; }
+      .monster-stats .sum-value { font-size: 0.85rem; }
       .monster-controls .stepper button { width: 26px; }
       .monster-controls .stepper { gap: 4px; }
       .monster-stats .btn-clear { padding: 9px 2px; font-size: 0.65rem; }
@@ -749,6 +760,9 @@
     }
 
     @media (max-width: 360px) {
+      .monster-stats .sum-cell { gap: 2px; }
+      .monster-stats .sum-name { font-size: 0.55rem; }
+      .monster-stats .sum-value { font-size: 0.65rem; }
       .monster-controls-fields .field > label {
         font-size: 0.75rem;
         letter-spacing: 0;
